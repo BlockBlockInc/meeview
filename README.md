@@ -1,4 +1,7 @@
-# Meeview
+![](https://github.com/neocho/assets/blob/master/banner.png)
+
+## Meeview
+> Pose your Meebits 
 
 # Setup
 1. Install dependencies: 
