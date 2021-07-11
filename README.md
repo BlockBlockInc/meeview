@@ -1,9 +1,9 @@
 ![](https://github.com/neocho/assets/blob/master/banner.png)
 
 ### Meeview
-> Pose your Meebits 
+> A photobooth for your Meebit
 
-![v1.](https://meeview.vercel.app/)
+[v1](https://meeview.vercel.app/)
 
 # Setup
 1. Install dependencies: 
