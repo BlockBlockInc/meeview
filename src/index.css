@@ -1,0 +1,10 @@
+/* ./src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities; 
+
+@font-face {
+	font-family: 'Nimbus'; 
+	src: url('./fonts/Nimbus-Sans-D-OT-Black-Extended_32740.ttf');
+}
+
