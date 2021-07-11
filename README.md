@@ -1,4 +1,4 @@
-![](https://github.com/neocho/assets/blob/master/banner.png)
+![](https://github.com/neocho/assets/blob/master/meeview/banner.png)
 
 ### [Meeview](https://meeview.vercel.app/)
 > A photobooth for your Meebit
