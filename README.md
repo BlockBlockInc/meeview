@@ -6,13 +6,13 @@
 npm install 
 ```
 
-2. Start 
+2. Start application: 
 ```
 npm start 
 ```
 
 # Dependencies 
-We use the following libraries to enable VRM usage:
+We rely on the following libraries to enable VRM usage:
 
 1. https://github.com/pixiv/three-vrm
 2. https://github.com/pmndrs/react-three-fiber
