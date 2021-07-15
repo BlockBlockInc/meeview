@@ -29,7 +29,7 @@ export const fetchFromStorage = async (meebitIDs) => {
         }
 
         if(firestoreUrl !== null) {
-            let blob = await axios.get(firestoreUrl, {responseType: 'blob', timeout: 20000});
+            let blob = await axios.get(firestoreUrl, {responseType: 'blob', timeout: 180000});
             let file = new File([blob.data], fileName);
             
             meebits.push(file);
