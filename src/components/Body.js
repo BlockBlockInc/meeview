@@ -11,6 +11,8 @@ import Picker from "./Picker";
 import Slider from "@material-ui/core/Slider";
 import Switch from '@material-ui/core/Switch';
 
+import poses from "../poses/poses.json";
+
 import nz from "../assets/cubemap/nz.png";
 import nx from "../assets/cubemap/nx.png";
 import ny from "../assets/cubemap/ny.png";
@@ -29,6 +31,7 @@ function Body(props){
 	const [ showSettings, setShowSettings ] = useState(false);
 	const [ showBodySettings, setShowBodySettings ] = useState(false);
 	const [ showMeebitsSettings, setMeebitsSettings ] = useState(); 
+    const [ showPoseSettings, setPoseSettings ] = useState(); 
 
     // Environment 
     const [ rotate, setRotate ] = useState(false);
@@ -57,17 +60,17 @@ function Body(props){
 	const [ head, setHead ] = useState(false);
 
     // Left Arms
-	const [ lArmPosX, setlArmPosX ] = useState(1.29); 
-	const [ lArmPosY, setlArmPosY ] = useState(-0.375); 
-	const [ lArmPosZ, setlArmPosZ ] = useState(6.77); 
-	const [ lHandPosX, setlHandPosX ] = useState(1.36); 
-	const [ lHandPosY, setlHandPosY ] = useState(-1.6); 
-	const [ lHandPosZ, setlHandPosZ ] = useState(6.75); 
+	const [ lArmPosX, setlArmPosX ] = useState(0); 
+	const [ lArmPosY, setlArmPosY ] = useState(0); 
+	const [ lArmPosZ, setlArmPosZ ] = useState(0); 
+	const [ lHandPosX, setlHandPosX ] = useState(0); 
+	const [ lHandPosY, setlHandPosY ] = useState(0); 
+	const [ lHandPosZ, setlHandPosZ ] = useState(0); 
 
     // Right Arms
 	const [ rArmPosX, setrArmPosX ] = useState(0);
-	const [ rArmPosY, setrArmPosY ] = useState(0.085);
-	const [ rArmPosZ, setrArmPosZ ] = useState(1.08);
+	const [ rArmPosY, setrArmPosY ] = useState(0);
+	const [ rArmPosZ, setrArmPosZ ] = useState(0);
 	const [ rHandPosX, setrHandPosX ] = useState(0); 
 	const [ rHandPosY, setrHandPosY ] = useState(0); 
 	const [ rHandPosZ, setrHandPosZ ] = useState(0); 
@@ -308,6 +311,66 @@ function Body(props){
 		setHeadZ(nv);
 	}
 
+    // Set deafult Pose Settings 
+    const defaultPoseSettings = () => {
+        //left Arms 
+        setlArmPosX(0); 
+        setlArmPosY(0); 
+	    setlArmPosZ(0); 
+	    setlHandPosX(0); 
+	    setlHandPosY(0); 
+	    setlHandPosZ(0); 
+
+        // Right Arms
+        setrArmPosX(0);
+	    setrArmPosY(0);
+	    setrArmPosZ(0);
+	    setrHandPosX(0); 
+	    setrHandPosY(0); 
+	    setrHandPosZ(0); 
+
+        // Left Leg 
+	    setlUpperLegX(0);
+	    setlUpperLegY(0);
+	    setlUpperLegZ(0);
+	    setlLowerLegX(0);
+	    setlLowerLegY(0);
+	    setlLowerLegZ(0);
+
+        // Right Leg
+	    setrUpperLegX(0);
+	    setrUpperLegY(0);
+	    setrUpperLegZ(0);
+	    setrLowerLegX(0);
+	    setrLowerLegY(0);
+        setrLowerLegZ(0);
+
+         // Back
+        setSpineX(0);
+        setSpineY(0);
+        setSpineZ(0);
+
+        // Hips 
+	    setHipX(0);
+        setHipY(0);
+        setHipZ(0);
+
+        // Head
+	    setHeadX(0);
+        setHeadY(0);
+        setHeadZ(0);
+    };
+
+    // Handle Pose Settings 
+    const handlePoseSettings = (pose) => {
+        console.log(pose);
+        // Set to default, then change the settings 
+        defaultPoseSettings();
+
+
+        setHeadX(pose.headX);
+    };
+
 	const handleSettings = (settings) =>  {
 		console.log(settings);
 
@@ -315,6 +378,7 @@ function Body(props){
 			setShowBodySettings(true);
 			setShowSettings(false);
 			setMeebitsSettings(false);
+            setPoseSettings(false);
 			if(showBodySettings === true){
 				setShowBodySettings(false);
 			}
@@ -322,6 +386,7 @@ function Body(props){
 			setShowSettings(true);
 			setShowBodySettings(false);
 			setMeebitsSettings(false);
+            setPoseSettings(false);
 			if(showSettings === true){
 				setShowSettings(false);
 			}
@@ -329,10 +394,19 @@ function Body(props){
 			setMeebitsSettings(true);
 			setShowBodySettings(false);
 			setShowSettings(false);
+            setPoseSettings(false);
 			if(showMeebitsSettings === true){
 				setMeebitsSettings(false);
 			}
-		}
+		}else if (settings == 'pose'){
+            setPoseSettings(true);
+            setMeebitsSettings(false);
+			setShowBodySettings(false);
+			setShowSettings(false);
+            if(showPoseSettings === true){
+                setPoseSettings(false);
+            }
+        }
 	};
 
     const changeVrm = (event) => {
@@ -639,7 +713,7 @@ function Body(props){
                                 <h1 className="font-nimbus text-sm font-bold">Y</h1>
                                 <Slider 
                                     valueLabelDisplay="auto"
-                                    min={-1}
+                                    min={-1.4}
                                     max={2}
                                     step={0.005}
                                     value={lArmPosY}	
@@ -991,7 +1065,7 @@ function Body(props){
 
             {
                 showMeebitsSettings === true ? 
-                    <div className="absolute z-20 top-16 left-3 w-auto bg-gray-100 rounded-lg mr-2 overflow-auto max-w-lg">
+                    <div className="absolute z-20 top-28 left-3 w-auto bg-gray-100 rounded-lg mr-2 overflow-auto max-w-lg">
                         <div className="m-5"> 
                             <h1 className="font-nimbus text-lg text-left mb-5">Your Meebits</h1>
                                 {
@@ -1005,6 +1079,37 @@ function Body(props){
                     </div>
                     : null
             }
+
+            <div className="absolute z-20 top-16 left-3">
+                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
+                    onClick={() => handleSettings('pose')}>
+                    <span>Poses</span>
+                </button>
+            </div>
+
+            {
+                showPoseSettings === true ? 
+                    <div className="absolute z-20 top-28 left-3 w-auto bg-gray-100 rounded-lg mr-2 overflow-auto max-w-lg">
+                        <div className="m-5"> 
+                            <h1 className="font-nimbus text-lg text-left mb-5">Poses</h1>
+                                {
+                                    poses.map((action, index) => 
+                                        <div className="flex mb-2" key={index}>
+                                            <button className="font-nimbus hover:text-gray-500" onClick={() => handlePoseSettings(action)}>{action.pose}</button>
+                                        </div>
+                                    )
+                                }
+                        </div>
+                    </div>
+                    : null
+            }
+
+            <div className="absolute z-20 top-3 left-40">
+                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
+                    onClick={() => defaultPoseSettings()}>
+                    <span>Reset</span>
+                </button>
+            </div>
 
             <Download />
         </div>
