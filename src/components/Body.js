@@ -367,8 +367,52 @@ function Body(props){
         // Set to default, then change the settings 
         defaultPoseSettings();
 
+        //left Arms 
+        setlArmPosX(pose.lArmPosX); 
+        setlArmPosY(pose.lArmPosY); 
+	    setlArmPosZ(pose.lArmPosZ); 
+	    setlHandPosX(pose.lHandPosX); 
+	    setlHandPosY(pose.lHandPosY); 
+	    setlHandPosZ(pose.lHandPosZ); 
 
-        setHeadX(pose.headX);
+        // Right Arms
+        setrArmPosX(pose.rArmPosX);
+	    setrArmPosY(pose.rArmPosY);
+	    setrArmPosZ(pose.rArmPosZ);
+	    setrHandPosX(pose.rHandPosX); 
+	    setrHandPosY(pose.rHandPosY); 
+	    setrHandPosZ(pose.rHandPosZ); 
+
+        // Left Leg 
+	    setlUpperLegX(pose.leftUpperLegX);
+	    setlUpperLegY(pose.leftUpperLegY);
+	    setlUpperLegZ(pose.leftUpperLegZ);
+	    setlLowerLegX(pose.leftLowerLegX);
+	    setlLowerLegY(pose.leftLowerLegY);
+	    setlLowerLegZ(pose.leftLowerLegZ);
+
+        // Right Leg
+	    setrUpperLegX(pose.rightUpperLegX);
+	    setrUpperLegY(pose.rightUpperLegY);
+	    setrUpperLegZ(pose.rightUpperLegZ);
+	    setrLowerLegX(pose.rightLowerLegX);
+	    setrLowerLegY(pose.rightLowerLegY);
+        setrLowerLegZ(pose.rightLowerLegZ);
+
+         // Back
+        setSpineX(pose.spineX);
+        setSpineY(pose.spineY);
+        setSpineZ(pose.spineZ);
+
+        // Hips 
+	    setHipX(pose.hipX);
+        setHipY(pose.hipY);
+        setHipZ(pose.hipZ);
+
+        // Head
+	    setHeadX(pose.headX);
+        setHeadY(pose.headY);
+        setHeadZ(pose.headZ);
     };
 
 	const handleSettings = (settings) =>  {
@@ -912,7 +956,7 @@ function Body(props){
                                     onChange={handleRUpperLegPosY}
                                 />
 
-                                <h1 className="font-nimbus text-sm">Y</h1>
+                                <h1 className="font-nimbus text-sm">Z</h1>
                                 <Slider 
                                     valueLabelDisplay="auto"
                                     min={-1}
