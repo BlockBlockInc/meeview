@@ -415,6 +415,10 @@ function Body(props){
         setHeadZ(pose.headZ);
     };
 
+    // TODO: Set a random pose 
+    const getRandomPose = (pose) => {
+    };
+
 	const handleSettings = (settings) =>  {
 		console.log(settings);
 
@@ -1152,6 +1156,13 @@ function Body(props){
                 <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
                     onClick={() => defaultPoseSettings()}>
                     <span>Reset</span>
+                </button>
+            </div>
+
+            <div className="absolute z-20 top-16 left-40">
+                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
+                    onClick={() => getRandomPose(Math.floor(Math.random()*2))}>
+                    <span>Random Pose</span>
                 </button>
             </div>
 
