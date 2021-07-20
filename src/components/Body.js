@@ -460,11 +460,15 @@ function Body(props){
     };
 
     // TODO: Set a random pose 
-    const getRandomPose = (pose) => {
+    const getRandomPose = () => {
+        const len = poses.length; 
+        const randomNum = Math.floor(Math.random() * len);
+        const pose = poses[randomNum];
+
+        handlePoseSettings(pose);
     };
 
     const downloadPose = async () => {
-        
         // Get the pose config
         const pose = {
             "lArmPosX": lArmPosX,
@@ -1267,12 +1271,12 @@ function Body(props){
                 </button>
             </div>
 
-            {/* <div className="absolute z-20 top-16 left-40">
+            <div className="absolute z-20 top-16 left-40">
                 <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
                     onClick={() => getRandomPose()}>
                     <span>Random Pose</span>
                 </button>
-            </div> */}
+            </div>
 
             <Download />
         </div>
