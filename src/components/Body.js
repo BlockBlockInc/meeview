@@ -408,7 +408,6 @@ function Body(props){
 
     // Handle Pose Settings 
     const handlePoseSettings = (pose) => {
-        console.log(pose);
         // Set to default, then change the settings 
         defaultPoseSettings();
 
@@ -518,8 +517,6 @@ function Body(props){
     };
 
 	const handleSettings = (settings) =>  {
-		console.log(settings);
-
 		if(settings === 'body'){
 			setShowBodySettings(true);
 			setShowSettings(false);
