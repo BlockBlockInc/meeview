@@ -1,7 +1,8 @@
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useCallback, useMemo } from "react";
 import { useVrm } from "../utils/loadVrm";
 import { Canvas } from "@react-three/fiber";
 import { Stars, OrbitControls, Sky, Environment } from "@react-three/drei";
+import { useDropzone } from "react-dropzone"; 
 
 import Download from "./Download";
 import VRMLooker from "./VRMLooker";
@@ -19,6 +20,21 @@ import ny from "../assets/cubemap/ny.png";
 import px from "../assets/cubemap/px.png";
 import pz from "../assets/cubemap/pz.png";
 import py from "../assets/cubemap/py.png";
+
+const baseStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '20px',
+    width: 300,
+    borderRadius: 10,
+    borderColor: '#000000',
+    borderStyle: 'solid',
+    backgroundColor: '#000000',
+    color: '#ffffff',
+    outline: 'none',
+    transition: 'border .24s ease-in-out'
+};
 
 function Body(props){
     // Meebits that were passed after fetching them
@@ -311,6 +327,35 @@ function Body(props){
 		setHeadZ(nv);
 	}
 
+    // Upload pose 
+    const onDrop = useCallback((af) => {
+        af.forEach((file) => {
+            const reader = new FileReader();
+
+            reader.onabort = () => console.log("File aborted");
+            reader.onerror = () => console.log("File reader failed");
+            reader.onload = () => {
+                const pose = JSON.parse(reader.result);
+                handlePoseSettings(pose);
+            }
+
+            reader.readAsText(file);
+        });
+	}, []);
+
+    // Settings for the dropzone
+    const {
+		getRootProps, 
+		getInputProps, 
+		isDragActive, 
+		isDragAccept, 
+		isDragReject
+	} = useDropzone({onDrop, accept: '.json'});	
+	
+	const style = useMemo(() => ({
+		...baseStyle, 
+	}), []);
+
     // Set deafult Pose Settings 
     const defaultPoseSettings = () => {
         //left Arms 
@@ -417,6 +462,59 @@ function Body(props){
 
     // TODO: Set a random pose 
     const getRandomPose = (pose) => {
+    };
+
+    const downloadPose = async () => {
+        
+        // Get the pose config
+        const pose = {
+            "lArmPosX": lArmPosX,
+            "lArmPosY": lArmPosY,
+            "lArmPosZ": lArmPosZ, 
+            "lHandPosX": lHandPosX, 
+            "lHandPosY": lHandPosY, 
+            "lHandPosZ": lHandPosZ, 
+            "rArmPosX": rArmPosX, 
+            "rArmPosY": rArmPosY, 
+            "rArmPosZ": rArmPosZ, 
+            "rHandPosX": rHandPosX, 
+            "rHandPosY": rHandPosY, 
+            "rHandPosZ": rHandPosZ, 
+            "leftUpperLegX": leftUpperLegX, 
+            "leftUpperLegY": leftUpperLegY, 
+            "leftUpperLegZ": leftUpperLegZ, 
+            "leftLowerLegX": leftLowerLegX, 
+            "leftLowerLegY": leftLowerLegY, 
+            "leftLowerLegZ": leftLowerLegZ, 
+            "rightUpperLegX": rightUpperLegX, 
+            "rightUpperLegY": rightUpperLegY, 
+            "rightUpperLegZ": rightUpperLegZ, 
+            "rightLowerLegX": rightLowerLegX, 
+            "rightLowerLegY": rightLowerLegY, 
+            "rightLowerLegZ": rightLowerLegZ, 
+            "spineX": spineX, 
+            "spineY": spineY, 
+            "spineZ": spineZ, 
+            "hipX": hipX, 
+            "hipY": hipY, 
+            "hipZ": hipZ, 
+            "headX": headX, 
+            "headY": headY, 
+            "headZ": headZ
+        };
+
+        // Set Json, turn into blob and create an object url
+        const jsonPose = JSON.stringify(pose);
+        const blob = new Blob([[jsonPose]],{ type:'application/json' });
+        const href = await URL.createObjectURL(blob);
+
+        // Create anchor tag for download
+        const link = document.createElement('a');
+        link.href = href;
+        link.download = "MeeviewPose.json";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
 	const handleSettings = (settings) =>  {
@@ -744,7 +842,11 @@ function Body(props){
 
                 <div className="absolute z-20 top-24 right-3 w-auto bg-gray-100 rounded-lg mt-5 mr-2 overflow-auto h-5/6 max-w-lg">
                     <div className="m-5"> 
-                        <h1 className="font-nimbus text-lg text-left">Body Settings</h1>
+
+                        <div className="flex justify-between"> 
+                            <h1 className="font-nimbus text-xl text-left">Body Settings</h1>
+                        </div>
+
                         <div className="flex">
                             <div className="mt-3 w-48">
                                 <h1 className="font-nimbus text-sm">Left Upper Arm</h1>
@@ -871,6 +973,15 @@ function Body(props){
                                     value={rHandPosZ}	
                                     onChange={handleRHandPosZ}
                                 />
+                                
+                                <button className="font-nimbus text-md hover:text-gray-500 mt-4" onClick={downloadPose}>Download Pose</button>
+
+                                <div className="mt-5 mb-8 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full">
+                                    <div {...getRootProps({style})}>
+                                        <input {...getInputProps()} />
+                                        <h1 className="text-md font-bold">Drag and drop pose file </h1>	
+                                    </div>	
+							    </div>
                             </div>
 
                             <div className="mt-3 ml-5 mr-5 w-48">
@@ -1131,7 +1242,7 @@ function Body(props){
             <div className="absolute z-20 top-16 left-3">
                 <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
                     onClick={() => handleSettings('pose')}>
-                    <span>Poses</span>
+                    <span>Preset Poses</span>
                 </button>
             </div>
 
@@ -1139,7 +1250,7 @@ function Body(props){
                 showPoseSettings === true ? 
                     <div className="absolute z-20 top-28 left-3 w-auto bg-gray-100 rounded-lg mr-2 overflow-auto max-w-lg">
                         <div className="m-5"> 
-                            <h1 className="font-nimbus text-lg text-left mb-5">Poses</h1>
+                            <h1 className="font-nimbus text-lg text-left mb-3">Preset Poses</h1>
                                 {
                                     poses.map((action, index) => 
                                         <div className="flex mb-2" key={index}>
@@ -1155,13 +1266,13 @@ function Body(props){
             <div className="absolute z-20 top-3 left-40">
                 <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
                     onClick={() => defaultPoseSettings()}>
-                    <span>Reset</span>
+                    <span>Reset Pose</span>
                 </button>
             </div>
 
             {/* <div className="absolute z-20 top-16 left-40">
                 <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
-                    onClick={() => getRandomPose(Math.floor(Math.random()*2))}>
+                    onClick={() => getRandomPose()}>
                     <span>Random Pose</span>
                 </button>
             </div> */}
