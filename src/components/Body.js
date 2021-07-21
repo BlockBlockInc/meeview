@@ -13,6 +13,7 @@ import Slider from "@material-ui/core/Slider";
 import Switch from '@material-ui/core/Switch';
 
 import poses from "../poses/poses.json";
+import backgroundPresets from "../background/backgroundPresets.json";
 
 import nz from "../assets/cubemap/nz.png";
 import nx from "../assets/cubemap/nx.png";
@@ -46,8 +47,8 @@ function Body(props){
     // Settings
 	const [ showSettings, setShowSettings ] = useState(false);
 	const [ showBodySettings, setShowBodySettings ] = useState(false);
-	const [ showMeebitsSettings, setMeebitsSettings ] = useState(); 
-    const [ showPoseSettings, setPoseSettings ] = useState(); 
+	const [ showMeebitsSettings, setMeebitsSettings ] = useState(false); 
+    const [ showPoseSettings, setPoseSettings ] = useState(false); 
 
     // Environment 
     const [ rotate, setRotate ] = useState(false);
@@ -57,7 +58,7 @@ function Body(props){
 	const [ environment, setEnvironment ] = useState(false);
 	const [ ground, setGround ] = useState(true);
 
-    // Lighting  
+    // Sky  
 	const [ skyMieDirectionalG, setSkyMieDirectionalG ] = useState(0.3);
 	const [ skyMieCoefficent, setSkyMieCoefficent ] = useState(0.08);
 	const [ skyRayleigh, setSkyRayleigh ] = useState(8.7);
@@ -67,7 +68,7 @@ function Body(props){
 	const [ zPos, setZPos ] = useState(90); 
 	const [ ambientLight, setAmbientLight ] = useState(1);
 
-    // Camera
+    // Directional Light
 	const [ dirLX, setDirLX ] = useState(3.5); 	
 	const [ dirLY, setDirLY ] = useState(8.5); 
 	const [ dirLZ, setDirLZ ] = useState(2); 
@@ -520,6 +521,63 @@ function Body(props){
         document.body.removeChild(link);
     };
 
+    // Default background changes
+    const defaultBackgroundChanges = () => {
+        setRotate(false);
+        setSky(false);
+        setGrid(false);
+        setStars(false);
+        setEnvironment(false);
+        setGround(true);
+
+        setSkyMieDirectionalG(0.3);
+        setSkyMieCoefficent(0.08);
+        setSkyRayleigh(8.7);
+        setSkyTurbidity(8);
+        setXPos(-1);
+        setYPos(3);
+        setZPos(90); 
+        setAmbientLight(1);
+
+        setDirLX(3.5); 	
+        setDirLY(8.5); 
+        setDirLZ(2); 
+    };
+
+    // Handle background changes
+    const handleBackgroundChanges = (background) => {
+        defaultBackgroundChanges();
+
+        setRotate(background.rotate);
+        setSky(background.sky);
+        setGrid(background.grid);
+        setStars(background.stars);
+        setEnvironment(background.environment);
+        setGround(background.ground);
+
+        setSkyMieDirectionalG(background.skyMieDirectionalG);
+        setSkyMieCoefficent(background.mieCoefficient);
+        setSkyRayleigh(background.skyRayleigh);
+        setSkyTurbidity(background.skyTurbidity);
+        setXPos(background.xPos);
+        setYPos(background.yPos);
+        setZPos(background.zPos); 
+        setAmbientLight(background.ambientLight);
+
+        setDirLX(background.dirLX); 	
+        setDirLY(background.dirLY); 
+        setDirLZ(background.dirLZ); 
+    };
+
+    // Set Random background
+    const getRandomBackground = () =>  {
+        const len = backgroundPresets.length; 
+        const randomNum = Math.floor(Math.random() * len);
+        const backgroundPreset = backgroundPresets[randomNum];
+
+        handleBackgroundChanges(backgroundPreset);
+    };
+
 	const handleSettings = (settings) =>  {
 		if(settings === 'body'){
 			setShowBodySettings(true);
@@ -578,7 +636,7 @@ function Body(props){
                     colorManagement={false}
                     concurrect={true}
                     shadows={true}
-                    camera={{position: [0,-5,-1], fov: 50}}
+                    camera={{position: [0,-5,-10], fov: 20}}
                     frameloop="always"
                     concurrent
                 >
@@ -638,12 +696,12 @@ function Body(props){
                 }
 
                 {
-                    stars === true ? <Stars radius={20} 
-                        depth={250}
-                        count={5000}
+                    stars === true ? <Stars 
+                        radius={25} 
+                        depth={500}
+                        count={9000}
                         factor={10}
                         saturation={100}
-                        fade
                         /> : null
                 }
 
@@ -683,7 +741,7 @@ function Body(props){
 
             {showSettings === true ? 
 
-            <div className="absolute z-20 top-24 right-3 w-auto bg-gray-100 rounded-lg mt-5 mr-2 h-5/6 overflow-auto">
+            <div className="absolute z-20 top-24 right-3 w-auto bg-gray-100 rounded-lg mt-5 mr-2 h-4/6 overflow-auto">
                 <div className="m-5"> 
                     <h1 className="font-nimbus text-lg font-bold text-left">Background Settings</h1>
 
@@ -1230,8 +1288,8 @@ function Body(props){
                             <h1 className="font-nimbus text-lg text-left mb-5">Your Meebits</h1>
                                 {
                                     meebits.map((file, index) => 
-                                        <div className="flex mb-2">
-                                            <button className="font-nimbus hover:text-gray-500" id={index} onClick={(e) => changeVrm(e)}>{file.name}</button>
+                                        <div className="flex mb-2" key={index}>
+                                            <button className="font-nimbus hover:text-gray-500" onClick={(e) => changeVrm(e)}>{file.name}</button>
                                         </div>
                                     )
                                 }
@@ -1275,6 +1333,13 @@ function Body(props){
                 <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
                     onClick={() => getRandomPose()}>
                     <span>Random Pose</span>
+                </button>
+            </div>
+
+            <div className="absolute z-20 top-3 left-40 ml-36">
+                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-48 rounded-full" 
+                    onClick={() => getRandomBackground()}>
+                    <span>Random Background</span>
                 </button>
             </div>
 
