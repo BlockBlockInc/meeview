@@ -5,9 +5,11 @@ import { injected } from "./utils/connectors";
 import getErrorMessage from "./utils/errors";
 import { fetchMeebits } from "./utils/api";
 import { fetchFromStorage } from "./utils/fetchStorage";
+import { Link } from "react-router-dom"; 
 
 import Header from "./components/Header";
-import Modal from "./components/Modal";
+import PopUp from "./components/Modal";
+// import Modal from "./components/Modal";
 import Body from "./components/Body";
 import MobileDefault from "./components/MobileDefault";
 
@@ -183,8 +185,14 @@ function App() {
 								}
 							
 							</div>
+
+							<Link to="/gallery">
+								<button className="absolute bottom-6 right-20 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-10 rounded-full">
+									🖼️
+								</button>
+							</Link>
 							
-							<Modal />
+							<PopUp />
 						</div>
 					</div>
 			}
