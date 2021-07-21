@@ -1338,6 +1338,13 @@ function Body(props){
 
             <div className="absolute z-20 top-3 left-40 ml-36">
                 <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-48 rounded-full" 
+                    onClick={() => defaultBackgroundChanges()}>
+                    <span>Reset Background</span>
+                </button>
+            </div>
+
+            <div className="absolute z-20 top-16 left-40 ml-36">
+                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-48 rounded-full" 
                     onClick={() => getRandomBackground()}>
                     <span>Random Background</span>
                 </button>
