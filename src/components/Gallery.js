@@ -23,12 +23,14 @@ const useStyles = makeStyles((theme) => ({
 
 function Gallery() {
     const [ poses, setPoses ] = useState([]);
+    const [ imgLink, setImgLink ] = useState(); 
 
     const classes = useStyles();
 	const [ open, setOpen ] = useState(false); 
     const [ loading, setLoading ] = useState(false); 
 
-    const handleClick = () => {
+    const handleClick = (link) => {
+        setImgLink(link);
 	  	setOpen(true); 
     }; 
   
@@ -107,7 +109,7 @@ function Gallery() {
                         <div className="mt-10 mr-20" key={index}>
                             <div className="bg-white rounded-lg shadow-xl w-80 h-72">
                                 <div>
-                                    <button onClick={handleClick}>
+                                    <button onClick={() => handleClick(file.imgFile)}>
                                             <img className="rounded-t-lg object-contain" src={file.imgFile} alt="img"></img>
                                            
                                             <div className="p-3 flex flex-col text-left">
@@ -121,9 +123,8 @@ function Gallery() {
                                         <button className="font-bold text-sm hover:text-gray-500 pl-3" onClick={() => downloadPose(file.pose)}>Download Pose</button>                                     
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <Modal
+
+                                <Modal
                                 className={classes.modal}
                                 open={open}
                                 onClose={handleExit}
@@ -132,13 +133,14 @@ function Gallery() {
                                 BackdropProps={{
                                     timeout: 500, 
                                 }}
-                            >
-                                <Fade in={open}>
-                                    <div className={classes.paper}>						
-                                        <img className="rounded-lg" src={file.imgFile} alt="img"></img>
-                                    </div>
-                                </Fade>
-                            </Modal>
+                                >
+                                    <Fade in={open}>
+                                        <div className={classes.paper}>						
+                                            <img className="rounded-lg" src={imgLink} alt="img"></img>
+                                        </div>
+                                    </Fade>
+                                </Modal>
+                            </div>
                         </div>
                     );
                 })
