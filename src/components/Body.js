@@ -4,6 +4,8 @@ import { Canvas } from "@react-three/fiber";
 import { Stars, OrbitControls, Sky, Environment } from "@react-three/drei";
 import { useDropzone } from "react-dropzone"; 
 
+import { firestoreRef } from "../utils/firebase";
+
 import Download from "./Download";
 import VRMLooker from "./VRMLooker";
 import Ground from "./Ground";
@@ -43,6 +45,9 @@ function Body(props){
 
     // VRM Loader
     const { vrm, loadVrm } = useVrm(); 
+
+    // Gets the current pose
+    const [ pose, setPose ] = useState(); 
 
     // Settings
 	const [ showSettings, setShowSettings ] = useState(false);
@@ -122,6 +127,9 @@ function Body(props){
 	const [ headX, setHeadX ] = useState(0);
 	const [ headY, setHeadY ] = useState(0);
 	const [ headZ, setHeadZ ] = useState(0);
+
+    // Community poses 
+    const [ communityPoses, setCommunityPoses ] = useState([]); 
 
     // Handles slider changes 
 	const handleRotate = (e) => {
@@ -348,9 +356,6 @@ function Body(props){
     const {
 		getRootProps, 
 		getInputProps, 
-		isDragActive, 
-		isDragAccept, 
-		isDragReject
 	} = useDropzone({onDrop, accept: '.json'});	
 	
 	const style = useMemo(() => ({
@@ -359,6 +364,9 @@ function Body(props){
 
     // Set deafult Pose Settings 
     const defaultPoseSettings = () => {
+        // Update state for latest pose 
+        setPose();
+
         //left Arms 
         setlArmPosX(0); 
         setlArmPosY(0); 
@@ -408,9 +416,8 @@ function Body(props){
     };
 
     // Handle Pose Settings 
-    const handlePoseSettings = (pose) => {
-        // Set to default, then change the settings 
-        defaultPoseSettings();
+    const handlePoseSettings = (pose) => {        
+        setPose(pose);
 
         //left Arms 
         setlArmPosX(pose.lArmPosX); 
@@ -522,7 +529,7 @@ function Body(props){
     };
 
     // Default background changes
-    const defaultBackgroundChanges = () => {
+    const defaultBackgroundChanges = () => {        
         setRotate(false);
         setSky(false);
         setGrid(false);
@@ -546,8 +553,6 @@ function Body(props){
 
     // Handle background changes
     const handleBackgroundChanges = (background) => {
-        defaultBackgroundChanges();
-
         setRotate(background.rotate);
         setSky(background.sky);
         setGrid(background.grid);
@@ -603,7 +608,7 @@ function Body(props){
 			if(showMeebitsSettings === true){
 				setMeebitsSettings(false);
 			}
-		}else if (settings == 'pose'){
+		}else if (settings === 'pose'){
             setPoseSettings(true);
             setMeebitsSettings(false);
 			setShowBodySettings(false);
@@ -623,6 +628,27 @@ function Body(props){
 			loadVrm(window.URL.createObjectURL(meebits[0]));
 		}
 	}, [meebits]);
+
+    useEffect(() => {
+        const fetchPoses = async () => {
+            const items = []; 
+        
+            const fileRef = firestoreRef.collection('gallery');
+        
+            fileRef.onSnapshot((querySnapshot) => {
+        
+                querySnapshot.forEach((doc) => {
+                    let data = doc.data();
+                    
+                    items.push(data.pose);
+                });
+            });
+
+            setCommunityPoses(items);
+        };
+
+        fetchPoses();
+    }, []);
 
     return (
         <div className="flex">
@@ -684,11 +710,11 @@ function Body(props){
                 }
                     
                 <OrbitControls 
-                enablePan={true} 
-                minPolarAngle={0.5}
-                maxPolarAngle={1.5}
-                enableZoom={true}
-                autoRotate={rotate}
+                    enablePan={true} 
+                    minPolarAngle={0.5}
+                    maxPolarAngle={1.5}
+                    enableZoom={true}
+                    autoRotate={rotate}
                 />
 
                 {
@@ -1309,9 +1335,9 @@ function Body(props){
                 showPoseSettings === true ? 
                     <div className="absolute z-20 top-28 left-3 w-auto bg-gray-100 rounded-lg mr-2 overflow-auto max-w-lg">
                         <div className="m-5"> 
-                            <h1 className="font-nimbus text-lg text-left mb-3">Preset Poses</h1>
+                            <h1 className="font-nimbus text-lg text-left mb-3">Community Poses</h1>
                                 {
-                                    poses.map((action, index) => 
+                                    communityPoses.map((action, index) => 
                                         <div className="flex mb-2" key={index}>
                                             <button className="font-nimbus hover:text-gray-500" onClick={() => handlePoseSettings(action)}>{action.pose}</button>
                                         </div>
@@ -1350,7 +1376,7 @@ function Body(props){
                 </button>
             </div>
 
-            <Download />
+            <Download pose={pose}/>
         </div>
     );
 	

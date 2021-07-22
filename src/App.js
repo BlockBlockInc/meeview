@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 
 import Header from "./components/Header";
 import PopUp from "./components/Modal";
-// import Modal from "./components/Modal";
 import Body from "./components/Body";
 import MobileDefault from "./components/MobileDefault";
 
@@ -24,7 +23,7 @@ function App() {
 	const [ errorMeebitsFetchSnackBar, setErrorMeebitsFetchSnackBar ] = useState(true);
 	const [ message, setMessage ] = useState("");
 
-	const { connector, library, account, activate, deactivate, active, error } = useWeb3React();
+	const { connector, library, account, activate, error } = useWeb3React();
 	const [ activatingConnector, setActivatingConnector ] = useState();
 
 	const [ loading, setLoading ] = useState(false);
@@ -106,7 +105,7 @@ function App() {
 		}else if(meebitsLength===0){
 			setNoMeebits(true);
 		}
-	});
+	}, [meebitsLength]);
 	
 	useEffect(() => {
 		if(activatingConnector && activatingConnector === connector){

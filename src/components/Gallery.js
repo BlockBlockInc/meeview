@@ -5,6 +5,7 @@ import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop"; 
 import Fade from "@material-ui/core/Fade"; 
 import { makeStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom"; 
 
 const useStyles = makeStyles((theme) => ({
 	modal: {
@@ -14,9 +15,9 @@ const useStyles = makeStyles((theme) => ({
 	},
 	paper: {
 		backgroundColor: theme.palette.common.black, 
-		height: 700,
-		width: 1400,
-		borderRadius: '15px'
+		height: 650,
+		width: 1100,
+        borderRadius: "10px"
 	}
 }));
 
@@ -24,7 +25,8 @@ function Gallery() {
     const [ poses, setPoses ] = useState([]);
 
     const classes = useStyles();
-	const [open, setOpen] = useState(false); 
+	const [ open, setOpen ] = useState(false); 
+    const [ loading, setLoading ] = useState(false); 
 
     const handleClick = () => {
 	  	setOpen(true); 
@@ -34,6 +36,21 @@ function Gallery() {
 		setOpen(false);
     }; 
 
+    const downloadPose = async (pose) => {
+        // Set Json, turn into blob and create an object url
+        const jsonPose = JSON.stringify(pose);
+        const blob = new Blob([[jsonPose]],{ type:'application/json' });
+        const href = await URL.createObjectURL(blob);
+
+        // Create anchor tag for download
+        const link = document.createElement('a');
+        link.href = href;
+        link.download = "MeeviewPose.json";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     useEffect(() => {
         const fetchGalleryFromStorage = async () => {
 
@@ -41,8 +58,24 @@ function Gallery() {
 
             fileRef.onSnapshot((querySnapshot) => {
                 const items = []; 
+
                 querySnapshot.forEach((doc) => {
-                    items.push(doc.data());
+                    let data = doc.data();
+                    
+                    // Check data 
+                    if (data.submitterName === ""){
+                        data.submitterName = "MeebitsDao Member"
+                    }
+                    
+                    if(data.meebitName === ""){
+                        data.meebitName = "No Name"
+                    }
+
+                    if(data.poseName === ""){
+                        data.poseName = "No Pose Name"
+                    }
+
+                    items.push(data);
                 });
 
                 setPoses(items);
@@ -50,15 +83,21 @@ function Gallery() {
         };
 
         fetchGalleryFromStorage();
+        setLoading(true);
     }, []);
-
 
     return(
         <div className="m-10">
 
             <div>
-                <h1 className="text-2xl font-nimbus">MEEVIEW GALLERY</h1>
-                <h1 className="text-md font-nimbus mt-1">Poses from the MeebitsDao Community</h1>
+                <Link to="/">
+                    <button className="text-md font-nimbus hover:text-gray-600"><u>Home</u></button>
+                </Link>
+
+                <div className="border-solid border-black rounded-md">
+                    <h1 className="text-2xl font-nimbus mt-5">MEEVIEW GALLERY</h1>
+                    <h1 className="text-md font-nimbus mt-1">Poses from the MeebitsDao Community</h1>
+                </div>
             </div>
 
             <div className="flex flex-row flex-wrap">
@@ -66,16 +105,22 @@ function Gallery() {
                 poses && poses.map((file, index) => {
                     return(
                         <div className="mt-10 mr-20" key={index}>
-                            <div className="bg-white rounded-lg shadow-lg">
-                                <button onClick={handleClick}>
-                                        <img className="rounded-t-lg object-contain h-40" src={file.url}></img>
-                                        
-                                        <div className="p-3 flex flex-col text-left">
-                                                <h1 className="font-nimbus text-xl mb-3">Submitted by {file.submitter}</h1>
-                                                <h1 className="font-nimbus text-md text-gray-700">Meebit's Name: {file.name}</h1>
-                                                <h1 className="font-nimbus text-md text-gray-700">Meebit's Pose: {file.pose}</h1>                                        
-                                        </div>
-                                </button>
+                            <div className="bg-white rounded-lg shadow-xl w-80 h-72">
+                                <div>
+                                    <button onClick={handleClick}>
+                                            <img className="rounded-t-lg object-contain" src={file.imgFile} alt="img"></img>
+                                           
+                                            <div className="p-3 flex flex-col text-left">
+                                                    <h1 className="font-bold text-sm mb-2">Submitted by {file.submitterName}</h1>
+                                                    <h1 className="font-semibold text-sm">Meebit's Name: {file.meebitName}</h1>
+                                                    <h1 className="font-semibold text-sm">Meebit's Pose: {file.poseName}</h1>   
+                                            </div>
+                                    </button>
+
+                                    <div>
+                                        <button className="font-bold text-sm hover:text-gray-500 pl-3" onClick={() => downloadPose(file.pose)}>Download Pose</button>                                     
+                                    </div>
+                                </div>
                             </div>
                             
                             <Modal
@@ -90,7 +135,7 @@ function Gallery() {
                             >
                                 <Fade in={open}>
                                     <div className={classes.paper}>						
-                                        <img className="rounded-lg" src={file.url}></img>
+                                        <img className="rounded-lg" src={file.imgFile} alt="img"></img>
                                     </div>
                                 </Fade>
                             </Modal>
@@ -99,8 +144,14 @@ function Gallery() {
                 })
             }
 
+            {
+                !loading === true ? 
+                    <div> 
+                        <h1 className="font-nimbus text-md mt-10">Loading...</h1>
+                    </div>
+                    : null
+            }
             </div>
-            
         </div>
     );
 }
