@@ -11,7 +11,7 @@ export const fetchFromStorage = async (meebitIDs) => {
     // Iterate through response and find the files
     for (let i = 0; i < meebitIDs.length; i++) {
         const fileName = 'meebit_' + meebitIDs[i] + '_t.vrm';
-
+                
         let file = null; 
 
         try {

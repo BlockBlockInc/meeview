@@ -43,6 +43,8 @@ function Body(props){
     // Meebits that were passed after fetching them
     const meebits = props.meebits;
 
+    console.log(props.meebits);
+
     // VRM Loader
     const { vrm, loadVrm } = useVrm(); 
 
@@ -619,8 +621,8 @@ function Body(props){
         }
 	};
 
-    const changeVrm = (event) => {
-		loadVrm(window.URL.createObjectURL(meebits[event.target.id]));
+    const changeVrm = (index) => {
+		loadVrm(window.URL.createObjectURL(meebits[index]));
 	};
 
     useEffect(() => {
@@ -1315,7 +1317,7 @@ function Body(props){
                                 {
                                     meebits.map((file, index) => 
                                         <div className="flex mb-2" key={index}>
-                                            <button className="font-nimbus hover:text-gray-500" onClick={(e) => changeVrm(e)}>{file.name}</button>
+                                            <button className="font-nimbus hover:text-gray-500" onClick={() => changeVrm(index)}>{file.name}</button>
                                         </div>
                                     )
                                 }
