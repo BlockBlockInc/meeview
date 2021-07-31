@@ -641,8 +641,14 @@ function Body(props){
         
                 querySnapshot.forEach((doc) => {
                     let data = doc.data();
-                    
-                    items.push(data.pose);
+
+                    console.log(data); 
+                    let payload = {
+                        "pose": data.pose, 
+                        "poseName": data.poseName
+                    }
+
+                    items.push(data);
                 });
             });
 
@@ -1341,7 +1347,8 @@ function Body(props){
                                 {
                                     communityPoses.map((action, index) => 
                                         <div className="flex mb-2" key={index}>
-                                            <button className="font-nimbus hover:text-gray-500" onClick={() => handlePoseSettings(action)}>{action.pose}</button>
+                                            
+                                            <button className="font-nimbus hover:text-gray-500" onClick={() => handlePoseSettings(action.pose)}>{action.poseName}</button>
                                         </div>
                                     )
                                 }
