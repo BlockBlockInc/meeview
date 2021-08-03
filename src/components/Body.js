@@ -1,8 +1,8 @@
 import { Suspense, useState, useEffect, useCallback, useMemo } from "react";
 import { useVrm } from "../utils/loadVrm";
 import { Canvas } from "@react-three/fiber";
-import { Stars, OrbitControls, Sky, Environment, Text, AdaptiveDpr } from "@react-three/drei";
-import { EffectComposer, DepthOfField, Bloom, Noise, Vignette, ColorDepth, ChromaticAberration, GodRays, HueSaturation, DotScreen, Glitch, BrightnessContrast } from '@react-three/postprocessing';
+import { Stars, OrbitControls, Sky, Environment, AdaptiveDpr, Center } from "@react-three/drei";
+import { EffectComposer, Bloom, Noise, HueSaturation,} from '@react-three/postprocessing';
 import { useDropzone } from "react-dropzone"; 
 
 import { firestoreRef } from "../utils/firebase";
@@ -633,126 +633,125 @@ function Body(props){
         <div className="flex">
             <div id="screenshot" className="relative z-0 w-full h-screen">
                 <Canvas 
-                    pixelRatio={window.devicePixelRatio}
-                    performance={{ min: 0.5 }}
-                    gl={{alpha:true, antialias:true, preserveDrawingBuffer:true}}
-                    gl2={true}
+                    dpr={window.devicePixelRatio}
+                    gl={{ alpha:true, antialias:true, preserveDrawingBuffer:true }}
                     linear={true}
                     flat={true}
-                    colorManagement={true}
-                    concurrect={true}
-                    frameloop="always"
-                    concurrent
-                    camera={{ position: [0,-5,-10], fov: 45 }}
+                    mode="concurrent"
+                    frameloop="demand"
+                    camera={{ position: [0,-5,-10], fov: 24 }}
                 >
-
-                <VRMLooker 
-                    vrmFile={vrm} 
-                    headLock={head} 
-                    lArmX={lArmPosX}  
-                    lArmY={lArmPosY}  
-                    lArmZ={lArmPosZ}  
-                    lHandX={lHandPosX}  
-                    lHandY={lHandPosY}  
-                    lHandZ={lHandPosZ}  
-                    rArmX={rArmPosX} 
-                    rArmY={rArmPosY} 
-                    rArmZ={rArmPosZ} 
-                    rHandX={rHandPosX} 
-                    rHandY={rHandPosY} 
-                    rHandZ={rHandPosZ} 
-                    leftULegX={leftUpperLegX}
-                    leftULegY={leftUpperLegY}
-                    leftULegZ={leftUpperLegZ}
-                    leftLLegX={leftLowerLegX}
-                    leftLLegY={leftLowerLegY}
-                    leftLLegZ={leftLowerLegZ}
-                    rightULegX={rightUpperLegX}
-                    rightULegY={rightUpperLegY}
-                    rightULegZ={rightUpperLegZ}
-                    rightLLegX={rightLowerLegX}
-                    rightLLegY={rightLowerLegY}
-                    rightLLegZ={rightLowerLegZ}
-                    spX={spineX}
-                    spY={spineY}
-                    spZ={spineZ}
-                    hX={hipX}
-                    hY={hipY}
-                    hZ={hipZ}
-                    hdX={headX}
-                    hdY={headY}
-                    hdZ={headZ}
-                />
                 
-                {
-                    ground === true ? <Ground /> : null
-                }
-                    
-                <OrbitControls 
-                    enablePan={true} 
-                    minPolarAngle={1.5}
-                    maxPolarAngle={1.5}
-                    minDistance={0.5}
-                    maxDistance={5}
-                    enableZoom={true}
-                    autoRotate={rotate}
-                />
+                    <Center>
+                        <VRMLooker 
+                            vrmFile={vrm} 
+                            headLock={head} 
+                            lArmX={lArmPosX}  
+                            lArmY={lArmPosY}  
+                            lArmZ={lArmPosZ}  
+                            lHandX={lHandPosX}  
+                            lHandY={lHandPosY}  
+                            lHandZ={lHandPosZ}  
+                            rArmX={rArmPosX} 
+                            rArmY={rArmPosY} 
+                            rArmZ={rArmPosZ} 
+                            rHandX={rHandPosX} 
+                            rHandY={rHandPosY} 
+                            rHandZ={rHandPosZ} 
+                            leftULegX={leftUpperLegX}
+                            leftULegY={leftUpperLegY}
+                            leftULegZ={leftUpperLegZ}
+                            leftLLegX={leftLowerLegX}
+                            leftLLegY={leftLowerLegY}
+                            leftLLegZ={leftLowerLegZ}
+                            rightULegX={rightUpperLegX}
+                            rightULegY={rightUpperLegY}
+                            rightULegZ={rightUpperLegZ}
+                            rightLLegX={rightLowerLegX}
+                            rightLLegY={rightLowerLegY}
+                            rightLLegZ={rightLowerLegZ}
+                            spX={spineX}
+                            spY={spineY}
+                            spZ={spineZ}
+                            hX={hipX}
+                            hY={hipY}
+                            hZ={hipZ}
+                            hdX={headX}
+                            hdY={headY}
+                            hdZ={headZ}
+                        />
+                    </Center>
 
-                {
-                    grid === true ? <gridHelper args={[100,50]} /> : null
-                }
+                    {
+                        ground === true ? <Ground /> : null
+                    }
+                        
+                    <OrbitControls 
+                        minPolarAngle={1.5}
+                        maxPolarAngle={1.5}
+                        minDistance={5}
+                        maxDistance={8}
+                        enablePan={false} 
+                        enableZoom={true}
+                        autoRotate={rotate}
+                    />
 
-                {
-                    stars === true ? <Stars 
-                        radius={25} 
-                        depth={500}
-                        count={9000}
-                        factor={10}
-                        saturation={100}
-                        /> : null
-                }
+                    {
+                        grid === true ? <gridHelper args={[100,50]} position={[0, -1, 0]} /> : null
+                    }
 
-                {
-                    sky === true ? <Sky 
-                        distance={450000}
-                        sunPosition={[xPos, yPos, zPos]} 
-                        mieCoefficient={skyMieCoefficent}
-                        mieDirectionalG={skyMieDirectionalG}
-                        rayleigh={skyRayleigh}
-                        turbidity={skyTurbidity}
-                        /> : null
-                }
+                    {
+                        stars === true ? <Stars 
+                            radius={25} 
+                            depth={500}
+                            count={9000}
+                            factor={10}
+                            saturation={100}
+                            /> : null
+                    }
 
-                {
-                    environment === true ? 
-                        <Suspense fallback={null}>
-                            <Environment 
-                                background={environment}
-                                files={[px,nx,py,ny,pz,nz]}
-                                preset={null}
-                            /> 
-                        </Suspense> : null
-                }	
+                    {
+                        sky === true ? <Sky 
+                            distance={450000}
+                            sunPosition={[xPos, yPos, zPos]} 
+                            mieCoefficient={skyMieCoefficent}
+                            mieDirectionalG={skyMieDirectionalG}
+                            rayleigh={skyRayleigh}
+                            turbidity={skyTurbidity}
+                            /> : null
+                    }
 
-                <ambientLight intensity={1}/>
-                <hemisphereLight color={0xffeeb1} groundColor={0x080810} position={[0,0.1,0.5]} intensity={3.5}/>
+                    {
+                        environment === true ? 
+                            <Suspense fallback={null}>
+                                <Environment 
+                                    background={environment}
+                                    files={[px,nx,py,ny,pz,nz]}
+                                    preset={null}
+                                /> 
+                            </Suspense> : null
+                    }	
 
-                <EffectComposer>
-                    <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.5} intensity={0.3} />
-                    <Noise opacity={0.001} />
-                    <HueSaturation saturation={0.2}/>
-                    <AdaptiveDpr />
-                </EffectComposer>
+                    <ambientLight intensity={1}/>
+                    <hemisphereLight color={0xffeeb1} groundColor={0x080810} position={[0,0.12,0.2]} intensity={3.5}/>
+
+
+                    <EffectComposer>
+                        <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.5} intensity={0.3} />
+                        <Noise opacity={0.001} />
+                        <HueSaturation saturation={0.2}/>
+                        <AdaptiveDpr />
+                    </EffectComposer>
 
                 </Canvas>
             </div>
 
-        <div className="absolute z-20 top-3 right-3">
-            <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
-                onClick={() => handleSettings('background')}>
-                <span>Background</span>
-            </button>
-        </div>
+            <div className="absolute z-20 top-3 right-3">
+                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
+                    onClick={() => handleSettings('background')}>
+                    <span>Background</span>
+                </button>
+            </div>
 
             {showSettings === true ? 
 

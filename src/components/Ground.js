@@ -6,7 +6,7 @@ function Ground(props) {
 	const snap = useSnapshot(state);
 
 	return (
-		<mesh receiveShadow rotation={[-Math.PI/2,0,0]} position={[0, 0, 0]}>
+		<mesh receiveShadow rotation={[-Math.PI/2,0,0]} position={[0, -1, 0]}>
 			<planeBufferGeometry 
 				attach="geometry" 
 				args={[100,100]}
