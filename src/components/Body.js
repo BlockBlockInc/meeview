@@ -1,7 +1,8 @@
 import { Suspense, useState, useEffect, useCallback, useMemo } from "react";
 import { useVrm } from "../utils/loadVrm";
 import { Canvas } from "@react-three/fiber";
-import { Stars, OrbitControls, Sky, Environment } from "@react-three/drei";
+import { Stars, OrbitControls, Sky, Environment, Text, AdaptiveDpr } from "@react-three/drei";
+import { EffectComposer, DepthOfField, Bloom, Noise, Vignette, ColorDepth, ChromaticAberration, GodRays, HueSaturation, DotScreen, Glitch, BrightnessContrast } from '@react-three/postprocessing';
 import { useDropzone } from "react-dropzone"; 
 
 import { firestoreRef } from "../utils/firebase";
@@ -23,6 +24,7 @@ import ny from "../assets/cubemap/ny.png";
 import px from "../assets/cubemap/px.png";
 import pz from "../assets/cubemap/pz.png";
 import py from "../assets/cubemap/py.png";
+import { PerspectiveCamera } from "three";
 
 const baseStyle = {
     display: 'flex',
@@ -73,12 +75,6 @@ function Body(props){
 	const [ xPos, setXPos ] = useState(-1);
 	const [ yPos, setYPos ] = useState(3);
 	const [ zPos, setZPos ] = useState(90); 
-	const [ ambientLight, setAmbientLight ] = useState(1);
-
-    // Directional Light
-	const [ dirLX, setDirLX ] = useState(3.5); 	
-	const [ dirLY, setDirLY ] = useState(8.5); 
-	const [ dirLZ, setDirLZ ] = useState(2); 
 
     // Head
 	const [ head, setHead ] = useState(false);
@@ -176,22 +172,6 @@ function Body(props){
 
 	const handleZPos = (e,nv) => {
 		setZPos(nv);
-	};
-
-	const handleAmbientLight = (e,nv) => {
-		setAmbientLight(nv);
-	};	
-	
-	const handleDirLX = (e,nv) => {
-		setDirLX(nv);
-	};
-
-	const handleDirLY = (e,nv) => {
-		setDirLY(nv);
-	};
-
-	const handleDirLZ = (e,nv) => {
-		setDirLZ(nv);
 	};
 
 	const handleEnvironment = (e) => {
@@ -546,11 +526,7 @@ function Body(props){
         setXPos(-1);
         setYPos(3);
         setZPos(90); 
-        setAmbientLight(1);
 
-        setDirLX(3.5); 	
-        setDirLY(8.5); 
-        setDirLZ(2); 
     };
 
     // Handle background changes
@@ -569,11 +545,7 @@ function Body(props){
         setXPos(background.xPos);
         setYPos(background.yPos);
         setZPos(background.zPos); 
-        setAmbientLight(background.ambientLight);
 
-        setDirLX(background.dirLX); 	
-        setDirLY(background.dirLY); 
-        setDirLZ(background.dirLZ); 
     };
 
     // Set Random background
@@ -648,7 +620,7 @@ function Body(props){
                         "poseName": data.poseName
                     }
 
-                    items.push(data);
+                    items.push(payload);
                 });
             });
 
@@ -663,16 +635,16 @@ function Body(props){
             <div id="screenshot" className="relative z-0 w-full h-screen">
                 <Canvas 
                     pixelRatio={window.devicePixelRatio}
-                    gl={{antialias:true, preserveDrawingBuffer:true}}
+                    performance={{ min: 0.5 }}
+                    gl={{alpha:true, antialias:true, preserveDrawingBuffer:true}}
                     gl2={true}
                     linear={true}
                     flat={true}
-                    colorManagement={false}
+                    colorManagement={true}
                     concurrect={true}
-                    shadows={true}
-                    camera={{position: [0,-5,-10], fov: 20}}
                     frameloop="always"
                     concurrent
+                    camera={{ position: [0, -12, 16], fov: 50}}
                 >
 
                 <VRMLooker 
@@ -719,8 +691,10 @@ function Body(props){
                     
                 <OrbitControls 
                     enablePan={true} 
-                    minPolarAngle={0.5}
+                    minPolarAngle={1.5}
                     maxPolarAngle={1.5}
+                    minDistance={0.5}
+                    maxDistance={5}
                     enableZoom={true}
                     autoRotate={rotate}
                 />
@@ -761,8 +735,16 @@ function Body(props){
                         </Suspense> : null
                 }	
 
-                <ambientLight intensity={ambientLight} />
-                <directionalLight position={[dirLX,dirLY,dirLZ]} />
+                <ambientLight />
+                <hemisphereLight color="grey" groundColor="white" position={[0,0,1]}/>
+
+                <EffectComposer>
+                    <Bloom luminanceThreshold={0.6} luminanceSmoothing={0.1} intensity={0.04} />
+                    <Noise opacity={0.001} />
+                    <HueSaturation saturation={0.2}/>
+                    <AdaptiveDpr />
+                </EffectComposer>
+
                 </Canvas>
             </div>
 
@@ -866,49 +848,6 @@ function Body(props){
                         </div>
 
                         <div className="mt-3 ml-10 mr-5">
-                            <h1 className="font-nimbus text-md font-bold">Ambient Light</h1>
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={0}
-                                max={1}
-                                step={0.05}
-                                value={ambientLight}	
-                                onChange={handleAmbientLight}
-                            />
-
-                            <h1 className="font-nimbus text-md font-bold">Directional Light</h1>
-
-                            <h1 className="font-nimbus text-md font-bold">x</h1>
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={0}
-                                max={10}
-                                step={0.5}
-                                value={dirLX}	
-                                onChange={handleDirLX}
-                            />
-
-                            <h1 className="font-nimbus text-md font-bold">y</h1>
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={0}
-                                max={10}
-                                step={0.5}
-                                value={dirLY}	
-                                onChange={handleDirLY}
-                            />
-
-                            <h1 className="font-nimbus text-md font-bold">z</h1>
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={-10}
-                                max={10}
-                                step={0.5}
-                                value={dirLZ}
-                                onChange={handleDirLZ}
-                            />
-
-
                             <h1 className="font-nimbus text-md font-bold">Ground</h1>
                             <Switch checked={ground} onChange={handleGround} />
                             
