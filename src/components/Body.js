@@ -644,7 +644,7 @@ function Body(props){
                     concurrect={true}
                     frameloop="always"
                     concurrent
-                    camera={{ position: [0,-5,-10], fov: 20 }}
+                    camera={{ position: [0,-5,-10], fov: 45 }}
                 >
 
                 <VRMLooker 
@@ -735,11 +735,11 @@ function Body(props){
                         </Suspense> : null
                 }	
 
-                <ambientLight />
-                <hemisphereLight color="grey" groundColor="white" position={[0,0,1]}/>
+                <ambientLight intensity={1}/>
+                <hemisphereLight color={0xffeeb1} groundColor={0x080810} position={[0,0,1]} intensity={4}/>
 
                 <EffectComposer>
-                    <Bloom luminanceThreshold={0.6} luminanceSmoothing={0.1} intensity={0.04} />
+                    <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.5} intensity={0.3} />
                     <Noise opacity={0.001} />
                     <HueSaturation saturation={0.2}/>
                     <AdaptiveDpr />
