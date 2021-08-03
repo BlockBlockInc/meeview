@@ -62,7 +62,9 @@ function Download(props) {
 
 
 	const takeScreenshot = async () => {
- 		const canvas = await html2canvas(document.querySelector("#screenshot"));
+ 		const canvas = await html2canvas(document.querySelector("#screenshot"), {
+			scale: 5
+		});
 	
 	    canvas.style.display = "none";
 	    document.body.appendChild(canvas);

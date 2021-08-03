@@ -2,7 +2,8 @@ import { Suspense, useState, useEffect, useCallback, useMemo } from "react";
 import { useVrm } from "../utils/loadVrm";
 import { Canvas } from "@react-three/fiber";
 import { Stars, OrbitControls, Sky, Environment, AdaptiveDpr, Center } from "@react-three/drei";
-import { EffectComposer, Bloom, Noise, HueSaturation,} from '@react-three/postprocessing';
+import { EffectComposer, Bloom, Noise, HueSaturation, ChromaticAberration, Pixelation } from '@react-three/postprocessing';
+import { BlendFunction } from 'postprocessing';
 import { useDropzone } from "react-dropzone"; 
 
 import { firestoreRef } from "../utils/firebase";
@@ -24,6 +25,7 @@ import ny from "../assets/cubemap/ny.png";
 import px from "../assets/cubemap/px.png";
 import pz from "../assets/cubemap/pz.png";
 import py from "../assets/cubemap/py.png";
+import { BufferGeometry } from "three";
 
 const baseStyle = {
     display: 'flex',
@@ -65,6 +67,14 @@ function Body(props){
 	const [ stars, setStars ] = useState(false);	
 	const [ environment, setEnvironment ] = useState(false);
 	const [ ground, setGround ] = useState(true);
+
+    // Effects 
+    const [ chromatic, setChromatic ] = useState(false);
+    const [ chromaticX, setChromaticX ] = useState(0.02);
+    const [ chromaticY, setChromaticY] = useState(0.002);
+
+    const [ pixelation, setPixelation ] = useState(false);
+    const [ pixelationValue, setPixelationValue ] = useState(30)
 
     // Sky  
 	const [ skyMieDirectionalG, setSkyMieDirectionalG ] = useState(0.3);
@@ -315,6 +325,26 @@ function Body(props){
 
 	const handleHeadZ = (e,nv) => {
 		setHeadZ(nv);
+	}
+
+    const handleChromatic = (e) => {
+		setChromatic(e.target.checked);
+	};
+
+    const setChromaticXValue = (e,nv) => {
+		setChromaticX(nv);
+	}
+
+    const setChromaticYValue = (e,nv) => {
+		setChromaticY(nv);
+	}
+
+    const handlePixelation = (e) => {
+		setPixelation(e.target.checked);
+	};
+
+    const handlePixelationValue = (e,nv) => {
+		setPixelationValue(nv);
 	}
 
     // Upload pose 
@@ -642,7 +672,7 @@ function Body(props){
                     camera={{ position: [0,-5,-10], fov: 24 }}
                 >
                 
-                    <Center>
+                    <Center>                       
                         <VRMLooker 
                             vrmFile={vrm} 
                             headLock={head} 
@@ -690,7 +720,7 @@ function Body(props){
                         minPolarAngle={1.5}
                         maxPolarAngle={1.5}
                         minDistance={5}
-                        maxDistance={8}
+                        maxDistance={10}
                         enablePan={false} 
                         enableZoom={true}
                         autoRotate={rotate}
@@ -732,15 +762,27 @@ function Body(props){
                             </Suspense> : null
                     }	
 
-                    <ambientLight intensity={1}/>
-                    <hemisphereLight color={0xffeeb1} groundColor={0x080810} position={[0,0.12,0.2]} intensity={3.5}/>
-
+                    <ambientLight intensity={0.85}/>
+                    <hemisphereLight color={0xffeeb1} groundColor={0x080810} position={[0,0.12,0.2]} intensity={3.5} /> 
+                    <pointLight color={0x080810} position={[1, -19, -35]} intensity={0.2} />
+                    {/* <spotLight color={0x080810} position={[1, -20, -50]} intensity={12} angle={1} distance={50} penumbra={0.1} /> */}
 
                     <EffectComposer>
                         <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.5} intensity={0.3} />
                         <Noise opacity={0.001} />
                         <HueSaturation saturation={0.2}/>
                         <AdaptiveDpr />
+
+                        {
+                            chromatic === true ? 
+                                <ChromaticAberration blendFunction={BlendFunction.Normal} offset={[chromaticX, chromaticY]}/> : null
+                        }
+
+                        {
+                            pixelation === true ? 
+                                <Pixelation granularity={pixelationValue} /> : null
+                        }
+
                     </EffectComposer>
 
                 </Canvas>
@@ -854,6 +896,37 @@ function Body(props){
 
                             <h1 className="font-nimbus text-md font-bold mt-5">Background</h1>
                             <Switch checked={environment} onChange={handleEnvironment} />
+
+                            <h1 className="font-nimbus text-md font-bold mt-5">Chromatic</h1>
+                            <Switch checked={chromatic} onChange={handleChromatic} />
+                            <Slider 
+                                valueLabelDisplay="auto"
+                                min={0}
+                                max={0.4}
+                                step={0.01}
+                                value={chromaticX}
+                                onChange={setChromaticXValue}
+                            />
+
+                            <Slider 
+                                valueLabelDisplay="auto"
+                                min={0}
+                                max={0.4}
+                                step={0.001}
+                                value={chromaticY}
+                                onChange={setChromaticYValue}
+                            />
+
+                            <h1 className="font-nimbus text-md font-bold mt-5">Pixelation</h1>
+                            <Switch checked={pixelation} onChange={handlePixelation} />
+                            <Slider 
+                                valueLabelDisplay="auto"
+                                min={30}
+                                max={50}
+                                step={1}
+                                value={pixelationValue}
+                                onChange={handlePixelationValue}
+                            />
                         </div>
                     </div>
                 </div>
