@@ -24,7 +24,6 @@ import ny from "../assets/cubemap/ny.png";
 import px from "../assets/cubemap/px.png";
 import pz from "../assets/cubemap/pz.png";
 import py from "../assets/cubemap/py.png";
-import { PerspectiveCamera } from "three";
 
 const baseStyle = {
     display: 'flex',
@@ -736,7 +735,7 @@ function Body(props){
                 }	
 
                 <ambientLight intensity={1}/>
-                <hemisphereLight color={0xffeeb1} groundColor={0x080810} position={[0,0,1]} intensity={4}/>
+                <hemisphereLight color={0xffeeb1} groundColor={0x080810} position={[0,0.1,0.5]} intensity={3.5}/>
 
                 <EffectComposer>
                     <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.5} intensity={0.3} />
