@@ -644,7 +644,7 @@ function Body(props){
                     concurrect={true}
                     frameloop="always"
                     concurrent
-                    camera={{ position: [0, -12, 16], fov: 50}}
+                    camera={{ position: [0,-5,-10], fov: 20 }}
                 >
 
                 <VRMLooker 
