@@ -8,13 +8,14 @@ import { fetchFromStorage } from "./utils/fetchStorage";
 import { Link } from "react-router-dom"; 
 
 import Header from "./components/Header";
-import PopUp from "./components/Modal";
 import Body from "./components/Body";
 import MobileDefault from "./components/MobileDefault";
 
 import { Alert } from '@material-ui/lab';
 import Snackbar from '@material-ui/core/Snackbar';
 import { BrowserView, MobileView } from "react-device-detect";
+
+// import PopUp from "./components/Modal";
 
 function App() {
 	const [ open, setOpen ] = useState(true); 
@@ -186,12 +187,11 @@ function App() {
 							</div>
 
 							<Link to="/gallery">
-								<button className="absolute bottom-6 right-20 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-10 rounded-full">
-									🖼️
+								<button className="absolute bottom-6 right-8 bg-black hover:bg-gray-900 focus:outline-none text-white text-lg font-bold h-12 w-52 rounded-full">
+									Community Gallery
 								</button>
 							</Link>
 							
-							<PopUp />
 						</div>
 					</div>
 			}

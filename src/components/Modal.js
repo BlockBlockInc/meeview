@@ -51,11 +51,8 @@ function PopUp() {
   			>
 				<Fade in={open}>
 					<div className={classes.paper}>						
-						<h2 className="text-white font-nimbus text-2xl">MEEVIEW CONTROLS</h2>
-						<h2 className="text-white font-nimbus text-lg mt-5">1) Use your trackpad, mouse or keyboard (W,A,S,D) to control the camera.</h2>
-						<h2 className="text-white font-nimbus text-lg mt-3">2) Right click on mouse or two finger right-click to move camera up and down.</h2>
-						<h2 className="text-white font-nimbus text-lg mt-3">3) Press the "cheese 📸" button or "c" key to take a screenshot.</h2>
-						<h2 className="text-white font-nimbus text-md mt-6">Note: Meeview will not work if your wallet doesn't contain any Meebits. </h2>
+						<h2 className="text-white font-nimbus text-2xl"></h2>
+						<p className="text-white font-nimbus text-lg mt-5"></p>
   					</div>
   				</Fade>
 			</Modal>

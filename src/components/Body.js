@@ -46,8 +46,6 @@ function Body(props){
     // Meebits that were passed after fetching them
     const meebits = props.meebits;
 
-    console.log(props.meebits);
-
     // VRM Loader
     const { vrm, loadVrm } = useVrm(); 
 
@@ -643,7 +641,6 @@ function Body(props){
                 querySnapshot.forEach((doc) => {
                     let data = doc.data();
 
-                    console.log(data); 
                     let payload = {
                         "pose": data.pose, 
                         "poseName": data.poseName
@@ -662,6 +659,7 @@ function Body(props){
     return (
         <div className="flex">
             <div id="screenshot" className="relative z-0 w-full h-screen">
+
                 <Canvas 
                     dpr={window.devicePixelRatio}
                     gl={{ alpha:true, antialias:true, preserveDrawingBuffer:true }}
@@ -797,136 +795,196 @@ function Body(props){
 
             {showSettings === true ? 
 
-            <div className="absolute z-20 top-24 right-3 w-auto bg-gray-100 rounded-lg mt-5 mr-2 h-4/6 overflow-auto">
+            <div className="absolute z-20 top-24 right-3 w-96 bg-gray-100 rounded-lg mt-5 ml-2 mr-2 h-4/6 overflow-auto">
                 <div className="m-5"> 
                     <h1 className="font-nimbus text-lg font-bold text-left">Background Settings</h1>
 
-                    <div className="flex">
+                    <div className="flex-col">
                         <div className="mt-3">
-                            <h1 className="font-nimbus text-md font-bold">Rotate</h1>
-                            <Switch checked={rotate} onChange={handleRotate} />
 
-                            <h1 className="font-nimbus text-md font-bold">Grid</h1>
-                            <Switch checked={grid} onChange={handleGrid} />
+                            <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none mr-3 mb-3 text-white font-bold h-10 w-10 rounded-full" 
+                                onClick={() => defaultBackgroundChanges()}>
+                                    🗑️
+                            </button>
 
-                            <h1 className="font-nimbus text-md font-bold">Stars</h1>
-                            <Switch checked={stars} onChange={handleStars} />
+                            <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none mb-5 text-white font-bold h-10 w-10 rounded-full" 
+                                onClick={() => getRandomBackground()}>
+                                🔀
+                            </button>
 
-                            <h1 className="font-nimbus text-md font-bold">Sky</h1>
-                            <Switch checked={sky} onChange={handleSky} />
+                            <div className="flex flex-row space-x-5 mt-3">
+                                <div>
+                                    <h1 className="font-nimbus text-md font-bold">Rotate</h1>
+                                    <Switch checked={rotate} onChange={handleRotate} />
+                                </div>
+                               
+                                <div>
+                                    <h1 className="font-nimbus text-md font-bold">Grid</h1>
+                                    <Switch checked={grid} onChange={handleGrid} />
+                                </div>
 
-                            <h1 className="font-nimbus text-md font-bold">x position</h1>
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={-50}
-                                max={50}
-                                step={1}
-                                value={xPos}
-                                onChange={handleXPos}
-                            />
+                                <div>
+                                    <h1 className="font-nimbus text-md font-bold">Stars</h1>
+                                    <Switch checked={stars} onChange={handleStars} />
+                                </div>
 
-                            <h1 className="font-nimbus text-md font-bold">y position</h1>
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={-5}
-                                max={10}
-                                step={1}
-                                value={yPos}
-                                onChange={handleYPos}
-                            />
+                                <div>
+                                    <h1 className="font-nimbus text-md font-bold">Box</h1>
+                                    <Switch checked={environment} onChange={handleEnvironment} />
+                                </div>
+                            </div>
 
-                            <h1 className="font-nimbus text-md font-bold">z position</h1>
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={0}
-                                max={200}
-                                step={1}
-                                value={zPos}
-                                onChange={handleZPos}
-                            />
-
-                            <h1 className="font-nimbus text-md font-bold">mieDirectionalG</h1>
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={0}
-                                max={1}
-                                step={0.001}
-                                value={skyMieDirectionalG}
-                                onChange={handleSkyMieDirectionalG}
-                            />
-
-                            <h1 className="font-nimbus text-md font-bold">mieCoefficient</h1>
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={0}
-                                max={0.1}
-                                step={0.001}
-                                value={skyMieCoefficent}
-                                onChange={handleSkyMieCoefficient}
-                            />
-
-                            <h1 className="font-nimbus text-md font-bold">Rayleigh</h1>
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={0}
-                                max={10}
-                                step={0.5}
-                                value={skyRayleigh}
-                                onChange={handleSkyRayleigh}
-                            />
-
-                            <h1 className="font-nimbus text-md font-bold">Turbidity</h1>
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={0}
-                                max={10}
-                                step={0.5}
-                                value={skyTurbidity}	
-                                onChange={handleSkyTurbidity}
-                            />
-
-                        </div>
-
-                        <div className="mt-3 ml-10 mr-5">
-                            <h1 className="font-nimbus text-md font-bold">Ground</h1>
-                            <Switch checked={ground} onChange={handleGround} />
                             
-                            <h1 className="font-nimbus text-md font-bold">Ground Color</h1>
-                            <Picker />
+                            <div className="mt-7">
+                                <h1 className="font-nimbus text-md font-bold">Sun</h1>
+                                <Switch checked={sky} onChange={handleSky} />
 
-                            <h1 className="font-nimbus text-md font-bold mt-5">Background</h1>
-                            <Switch checked={environment} onChange={handleEnvironment} />
+                                <div className="ml-2 mt-3 flex flex-row flex-wrap space-x-10">
+                                    <div className="w-10">
+                                        <h1 className="font-nimbus text-sm font-bold">X</h1>
+                                        <Slider 
+                                            valueLabelDisplay="auto"
+                                            min={-50}
+                                            max={50}
+                                            step={1}
+                                            value={xPos}
+                                            onChange={handleXPos}
+                                        />
+                                    </div>
+                                 
+                                    <div className="w-10">
+                                        <h1 className="font-nimbus text-sm font-bold">Y</h1>
+                                        <Slider 
+                                            valueLabelDisplay="auto"
+                                            min={-5}
+                                            max={10}
+                                            step={1}
+                                            value={yPos}
+                                            onChange={handleYPos}
+                                        />
+                                    </div>
+                                    
+                                    <div className="w-10">
+                                        <h1 className="font-nimbus text-sm font-bold">Z</h1>
+                                        <Slider 
+                                            valueLabelDisplay="auto"
+                                            min={0}
+                                            max={200}
+                                            step={1}
+                                            value={zPos}
+                                            onChange={handleZPos}
+                                        />
+                                    </div>
 
-                            <h1 className="font-nimbus text-md font-bold mt-5">Chromatic</h1>
-                            <Switch checked={chromatic} onChange={handleChromatic} />
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={0}
-                                max={0.4}
-                                step={0.01}
-                                value={chromaticX}
-                                onChange={setChromaticXValue}
-                            />
+                                    <div className="w-10">
+                                        <h1 className="font-nimbus text-sm font-bold">MieG</h1>
+                                        <Slider 
+                                            valueLabelDisplay="auto"
+                                            min={0}
+                                            max={1}
+                                            step={0.001}
+                                            value={skyMieDirectionalG}
+                                            onChange={handleSkyMieDirectionalG}
+                                        />
+                                    </div>
+                                </div>
 
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={0}
-                                max={0.4}
-                                step={0.001}
-                                value={chromaticY}
-                                onChange={setChromaticYValue}
-                            />
+                                <div className="ml-2 mt-3 flex flex-row flex-wrap space-x-10">
+                                    <div className="w-10">
+                                            <h1 className="font-nimbus text-sm font-bold">MieC</h1>
+                                            <Slider 
+                                                valueLabelDisplay="auto"
+                                                min={0}
+                                                max={0.1}
+                                                step={0.001}
+                                                value={skyMieCoefficent}
+                                                onChange={handleSkyMieCoefficient}
+                                            />
+                                        </div>
+                                        
+                                        <div className="w-10">
+                                            <h1 className="font-nimbus text-sm font-bold">Ray</h1>
+                                            <Slider 
+                                                valueLabelDisplay="auto"
+                                                min={0}
+                                                max={10}
+                                                step={0.5}
+                                                value={skyRayleigh}
+                                                onChange={handleSkyRayleigh}
+                                            />
+                                        </div>
+                                    
+                                        <div className="w-10">
+                                            <h1 className="font-nimbus text-sm font-bold">Turb</h1>
+                                            <Slider 
+                                                valueLabelDisplay="auto"
+                                                min={0}
+                                                max={10}
+                                                step={0.5}
+                                                value={skyTurbidity}	
+                                                onChange={handleSkyTurbidity}
+                                            />
+                                        </div>
+                                    </div>
+                            </div>
 
-                            <h1 className="font-nimbus text-md font-bold mt-5">Pixelation</h1>
-                            <Switch checked={pixelation} onChange={handlePixelation} />
-                            <Slider 
-                                valueLabelDisplay="auto"
-                                min={30}
-                                max={50}
-                                step={1}
-                                value={pixelationValue}
-                                onChange={handlePixelationValue}
-                            />
+                            <div className="ml-2 mt-10 ml-2">
+                                <div>
+                                    <h1 className="font-nimbus text-md font-bold">Ground</h1>
+                                    <Switch checked={ground} onChange={handleGround} />
+                                </div>
+                                
+                                <div className="mt-3">
+                                    <h1 className="font-nimbus text-md font-bold">Ground Color</h1>
+                                    <Picker />
+                                </div>
+                                
+                            </div>
+                           
+                            <div className="ml-2 mt-10">
+                                <h1 className="font-nimbus text-md font-bold mt-5">Chromatic</h1>
+                                <Switch checked={chromatic} onChange={handleChromatic} />
+                                
+                                <div className="mt-5">
+                                    <h1 className="font-nimbus text-sm font-bold">X offset</h1>
+                                    <Slider 
+                                        valueLabelDisplay="auto"
+                                        min={0}
+                                        max={0.4}
+                                        step={0.01}
+                                        value={chromaticX}
+                                        onChange={setChromaticXValue}
+                                    />
+
+                                    <h1 className="font-nimbus text-md font-bold">Y offset</h1>
+                                    <Slider 
+                                        valueLabelDisplay="auto"
+                                        min={0}
+                                        max={0.4}
+                                        step={0.001}
+                                        value={chromaticY}
+                                        onChange={setChromaticYValue}
+                                    />
+                                </div>
+                                
+                            </div>
+
+                            <div className="ml-2 mt-10">
+                                <h1 className="font-nimbus text-md font-bold">Pixelation</h1>
+                                <Switch checked={pixelation} onChange={handlePixelation} />
+                                
+                                <div className="mt-5">
+                                    <h1 className="font-nimbus text-sm font-bold">Pixel Granulation</h1>
+                                    <Slider 
+                                        valueLabelDisplay="auto"
+                                        min={30}
+                                        max={50}
+                                        step={1}
+                                        value={pixelationValue}
+                                        onChange={handlePixelationValue}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -945,11 +1003,20 @@ function Body(props){
 
                 <div className="absolute z-20 top-24 right-3 w-auto bg-gray-100 rounded-lg mt-5 mr-2 overflow-auto h-5/6 max-w-lg">
                     <div className="m-5"> 
+                        <h1 className="font-nimbus text-xl text-left">Body Settings</h1>
 
-                        <div className="flex justify-between"> 
-                            <h1 className="font-nimbus text-xl text-left">Body Settings</h1>
+                        <div className="mt-5">
+                            <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none mr-3 mb-3 text-white font-bold h-10 w-10 rounded-full" 
+                                onClick={() => defaultPoseSettings()}>
+                                    🗑️
+                            </button>
+
+                            <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none mb-5 text-white font-bold h-10 w-10 rounded-full" 
+                                onClick={() => getRandomPose()}>
+                                🔀
+                            </button>
                         </div>
-
+                        
                         <div className="flex">
                             <div className="mt-3 w-48">
                                 <h1 className="font-nimbus text-sm">Left Upper Arm</h1>
@@ -1318,7 +1385,7 @@ function Body(props){
                 </div> : null 
             } 
 
-            <div className="absolute z-20 top-3 left-3">
+            <div className="absolute z-20 top-3 right-40">
                 <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
                     onClick={() => handleSettings('meebits')}>
                     <span>Meebits</span>
@@ -1327,7 +1394,7 @@ function Body(props){
 
             {
                 showMeebitsSettings === true ? 
-                    <div className="absolute z-20 top-28 left-3 w-auto bg-gray-100 rounded-lg mr-2 overflow-auto max-w-lg">
+                    <div className="absolute z-20 top-28 right-3 w-auto bg-gray-100 rounded-lg mr-2 overflow-auto max-w-lg">
                         <div className="m-5"> 
                             <h1 className="font-nimbus text-lg text-left mb-5">Your Meebits</h1>
                                 {
@@ -1342,7 +1409,7 @@ function Body(props){
                     : null
             }
 
-            <div className="absolute z-20 top-16 left-3">
+            <div className="absolute z-20 top-16 right-40">
                 <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
                     onClick={() => handleSettings('pose')}>
                     <span>Preset Poses</span>
@@ -1351,7 +1418,7 @@ function Body(props){
 
             {
                 showPoseSettings === true ? 
-                    <div className="absolute z-20 top-28 left-3 w-auto bg-gray-100 rounded-lg mr-2 overflow-auto max-w-lg">
+                    <div className="absolute z-20 top-28 right-3 w-auto bg-gray-100 rounded-lg mr-2 overflow-auto max-w-lg">
                         <div className="m-5"> 
                             <h1 className="font-nimbus text-lg text-left mb-3">Community Poses</h1>
                                 {
@@ -1366,34 +1433,6 @@ function Body(props){
                     </div>
                     : null
             }
-
-            <div className="absolute z-20 top-3 left-40">
-                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
-                    onClick={() => defaultPoseSettings()}>
-                    <span>Reset Pose</span>
-                </button>
-            </div>
-
-            <div className="absolute z-20 top-16 left-40">
-                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full" 
-                    onClick={() => getRandomPose()}>
-                    <span>Random Pose</span>
-                </button>
-            </div>
-
-            <div className="absolute z-20 top-3 left-40 ml-36">
-                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-48 rounded-full" 
-                    onClick={() => defaultBackgroundChanges()}>
-                    <span>Reset Background</span>
-                </button>
-            </div>
-
-            <div className="absolute z-20 top-16 left-40 ml-36">
-                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-48 rounded-full" 
-                    onClick={() => getRandomBackground()}>
-                    <span>Random Background</span>
-                </button>
-            </div>
 
             <Download pose={pose}/>
         </div>
