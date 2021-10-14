@@ -1,207 +1,216 @@
 import { useState, useEffect } from "react";
 import { useEagerConnect, useInactiveListener } from "./utils/loaders";
-import { useWeb3React } from '@web3-react/core';
+import { useWeb3React } from "@web3-react/core";
 import { injected } from "./utils/connectors";
 import getErrorMessage from "./utils/errors";
 import { fetchMeebits } from "./utils/api";
 import { fetchFromStorage } from "./utils/fetchStorage";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 
 import Header from "./components/Header";
 import Body from "./components/Body";
 import MobileDefault from "./components/MobileDefault";
 
-import { Alert } from '@material-ui/lab';
-import Snackbar from '@material-ui/core/Snackbar';
+import { Alert } from "@material-ui/lab";
+import Snackbar from "@material-ui/core/Snackbar";
 import { BrowserView, MobileView } from "react-device-detect";
 
 // import PopUp from "./components/Modal";
 
 function App() {
-	const [ open, setOpen ] = useState(true); 
+  const [open, setOpen] = useState(true);
 
-	const [ errorSnackBar, setErrorSnackBar ] = useState(true);
-	const [ errorMeebitsFetchSnackBar, setErrorMeebitsFetchSnackBar ] = useState(true);
-	const [ message, setMessage ] = useState("");
+  const [errorSnackBar, setErrorSnackBar] = useState(true);
+  const [errorMeebitsFetchSnackBar, setErrorMeebitsFetchSnackBar] =
+    useState(true);
+  const [message, setMessage] = useState("");
 
-	const { connector, library, account, activate, error } = useWeb3React();
-	const [ activatingConnector, setActivatingConnector ] = useState();
+  const { connector, library, account, activate, error } = useWeb3React();
+  const [activatingConnector, setActivatingConnector] = useState();
 
-	const [ loading, setLoading ] = useState(false);
-	const [ meebits, setMeebits ] = useState(); 
+  const [loading, setLoading] = useState(false);
+  const [meebits, setMeebits] = useState();
 
-	const [ meebitsResultError, setMeebitsResultError ] = useState(false);
-	const [ noMeebits, setNoMeebits] = useState(false); 
+  const [meebitsResultError, setMeebitsResultError] = useState(false);
+  const [noMeebits, setNoMeebits] = useState(false);
 
-	const [ meebitsLength, setMeebitsLength ] = useState();
+  const [meebitsLength, setMeebitsLength] = useState();
 
-	// Snackbars
-	const handleSnackBarClose = () => {
-		setOpen(false);
-	};
+  // Snackbars
+  const handleSnackBarClose = () => {
+    setOpen(false);
+  };
 
-	const handleErrorSnackBarClose = () => {
-		setErrorSnackBar(false);
-	};
+  const handleErrorSnackBarClose = () => {
+    setErrorSnackBar(false);
+  };
 
-	const handleErrorMeebitsFetchSnackBarClose = () => {
-		setErrorMeebitsFetchSnackBar(false);
-	};
+  const handleErrorMeebitsFetchSnackBarClose = () => {
+    setErrorMeebitsFetchSnackBar(false);
+  };
 
+  // Connect to Metamask
+  const handleClick = async () => {
+    // Account should activate here
+    setActivatingConnector(injected);
+    activate(injected);
+  };
 
-	// Connect to Metamask
-	const handleClick = async () => {
-		// Account should activate here
-		setActivatingConnector(injected);
-        activate(injected);
-	};
+  // Fetch Meebits from Firebase storage when Metamask is connected
+  const handleFetchMeebits = async () => {
+    setLoading(true);
 
-	// Fetch Meebits from Firebase storage when Metamask is connected
-	const handleFetchMeebits = async () => {
+    // Fetches Meebits IDs.
+    const meebitIDs = await fetchMeebits(account);
 
-		setLoading(true);
+    // Fetch default meebit
+    const defaultMeebit = await fetchFromStorage(["5220"]);
 
-		// Fetches Meebits IDs.
-		const meebitIDs = await fetchMeebits(account);
+    // If we load default, we won't see the snackbar messages
+    if (meebitIDs === null) {
+      setMeebitsLength(null);
+      setMessage(
+        "There was an error retriving your Meebits! Refresh the tab and try again!"
+      );
+    } else if (meebitIDs.length === 0) {
+      setMeebitsLength(0);
+      setMessage("There were no Meebits were found in your wallet!");
+      setMeebits(defaultMeebit);
+    } else if (meebitIDs.length > 0) {
+      // Fetch Meebits from firebase storage
+      const firebaseStorageResponse = await fetchFromStorage(meebitIDs);
 
-		// Fetch default meebit 
-		const defaultMeebit = await fetchFromStorage(['5220']);
+      if (firebaseStorageResponse.length === 0) {
+        setMeebitsLength(0);
+        setMessage("Your VRM hasn't been uploaded yet! Loading Default!");
+        setMeebits(defaultMeebit);
+      } else {
+        // VRM Files
+        setMeebits(firebaseStorageResponse);
+      }
+    }
 
+    setLoading(false);
+  };
 
-		// If we load default, we won't see the snackbar messages
-		if(meebitIDs === null) {
-			setMeebitsLength(null);
-			setMessage("There was an error retriving your Meebits! Refresh the tab and try again!");
-		}else if (meebitIDs.length === 0){
-			setMeebitsLength(0);
-			setMessage("There were no Meebits were found in your wallet!");
-			setMeebits(defaultMeebit);
-		}else if (meebitIDs.length > 0) {
-			// Fetch Meebits from firebase storage			
-			const firebaseStorageResponse = await fetchFromStorage(meebitIDs);
+  const handleDemo = async () => {
+    // Fetches default meebit
+    const defaultMeebit = await fetchFromStorage(["5220"]);
+    setMeebits(defaultMeebit);
+  };
 
-			if(firebaseStorageResponse.length === 0){
-				setMeebitsLength(0);
-				setMessage("Your VRM hasn't been uploaded yet! Loading Default!");
-				setMeebits(defaultMeebit);
-			}else{
-				// VRM Files 
-				setMeebits(firebaseStorageResponse);
-			}
-		}
+  useEffect(() => {
+    if (meebitsLength === null) {
+      setMeebitsResultError(true);
+    } else if (meebitsLength === 0) {
+      setNoMeebits(true);
+    }
+  }, [meebitsLength]);
 
-		setLoading(false);
-	};
+  useEffect(() => {
+    if (activatingConnector && activatingConnector === connector) {
+      setActivatingConnector(undefined);
+    }
+  }, [activatingConnector, connector]);
 
+  const eagerConnect = useEagerConnect();
+  useInactiveListener(!eagerConnect || !!activatingConnector);
 
-	const handleDemo = async () => {
-		// Fetches default meebit 
-		const defaultMeebit = await fetchFromStorage(['5220']);
-		setMeebits(defaultMeebit);
-	}
+  return (
+    <>
+      <BrowserView>
+        {!!meebits ? (
+          <Body meebits={meebits} />
+        ) : (
+          <div className="flex h-screen">
+            <div className="m-auto flex">
+              <div className="pl-7 pr-7">
+                <Header />
 
-	useEffect(() => {
-		if(meebitsLength===null){
-			setMeebitsResultError(true);
-		}else if(meebitsLength===0){
-			setNoMeebits(true);
-		}
-	}, [meebitsLength]);
-	
-	useEffect(() => {
-		if(activatingConnector && activatingConnector === connector){
-			setActivatingConnector(undefined);
-		}
-	}, [activatingConnector, connector]);
+                {!!account === true ? (
+                  <Snackbar
+                    open={open}
+                    onClose={handleSnackBarClose}
+                    autoHideDuration={3000}
+                  >
+                    <Alert onClose={handleSnackBarClose} severity="success">
+                      You're connected to Metamask!
+                    </Alert>
+                  </Snackbar>
+                ) : null}
 
-	const eagerConnect = useEagerConnect();
-	useInactiveListener(!eagerConnect || !!activatingConnector);
+                {!!(account && library) === false ? (
+                  <button
+                    className="outline-none	text-md font-bold mt-8 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-52 rounded-md"
+                    onClick={handleClick}
+                  >
+                    Connect to Metamask
+                  </button>
+                ) : loading === false ? (
+                  <button
+                    className="outline-none	text-md font-bold mt-8 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-52 rounded-md"
+                    onClick={handleFetchMeebits}
+                  >
+                    Load Meebits
+                  </button>
+                ) : (
+                  <button className="outline-none	animate-bounce text-md font-bold mt-8 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-52 rounded-md">
+                    Loading Meebits!
+                  </button>
+                )}
 
-    return ( 
-		<>
-			<BrowserView>
-			
-			{
-				!!meebits ? 
-					<Body meebits={meebits} />
-					:
-					<div className="flex h-screen"> 
-						<div className="m-auto flex">
-							<div className="pl-7 pr-7">
-								<Header />
+                {
+                  <button
+                    className="outline-none	text-md font-bold mt-8 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 ml-5 text-white font-bold h-12 w-52 rounded-md"
+                    onClick={handleDemo}
+                  >
+                    Demo
+                  </button>
+                }
 
-								{
-									(!!account === true) ? 
-										<Snackbar open={open} onClose={handleSnackBarClose} autoHideDuration={3000}>
-											<Alert onClose={handleSnackBarClose} severity="success">You're connected to Metamask!</Alert>
-										</Snackbar>
-										: null
-								}
+                {!!error && (
+                  <Snackbar
+                    open={errorSnackBar}
+                    onClose={handleErrorSnackBarClose}
+                    autoHideDuration={3000}
+                  >
+                    <Alert onClose={handleErrorSnackBarClose} severity="error">
+                      {getErrorMessage(error)}
+                    </Alert>
+                  </Snackbar>
+                )}
 
-								{
-									!!(account && library) === false ? 
-										<button 
-											className="outline-none	text-md font-bold mt-8 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-52 rounded-md"
-											onClick={handleClick}
-										>
-											Connect to Metamask
-										</button> : 
-										(
-											loading === false ?
-											<button 
-												className="outline-none	text-md font-bold mt-8 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-52 rounded-md"
-												onClick={handleFetchMeebits}
-											>
-												Load Meebits
-											</button>
-											: 
-											<button 
-												className="outline-none	animate-bounce text-md font-bold mt-8 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-52 rounded-md"
-											>
-												Loading Meebits!
-											</button>
-										)
-										
-								}
+                {(meebitsResultError || noMeebits) && (
+                  <Snackbar
+                    open={errorMeebitsFetchSnackBar}
+                    onClose={handleErrorMeebitsFetchSnackBarClose}
+                    autoHideDuration={3000}
+                  >
+                    <Alert
+                      onClose={handleErrorMeebitsFetchSnackBarClose}
+                      severity="error"
+                    >
+                      {message}
+                    </Alert>
+                  </Snackbar>
+                )}
+              </div>
 
-								{
-									<button 
-									className="outline-none	text-md font-bold mt-8 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 ml-5 text-white font-bold h-12 w-52 rounded-md"
-									onClick={handleDemo}
-									>
-										Demo
-									</button>
-								}
+              <Link to="/gallery">
+                <button className="absolute bottom-6 right-8 bg-black hover:bg-gray-900 focus:outline-none text-white text-lg font-bold h-12 w-52 rounded-full">
+                  Community Gallery
+                </button>
+              </Link>
+            </div>
+          </div>
+        )}
+      </BrowserView>
 
-								{
-									!!error && <Snackbar open={errorSnackBar} onClose={handleErrorSnackBarClose} autoHideDuration={3000}><Alert onClose={handleErrorSnackBarClose} severity="error">{getErrorMessage(error)}</Alert></Snackbar>
-								}
-
-								{
-									(meebitsResultError || noMeebits) &&
-										<Snackbar open={errorMeebitsFetchSnackBar} onClose={handleErrorMeebitsFetchSnackBarClose} autoHideDuration={3000}>
-												<Alert onClose={handleErrorMeebitsFetchSnackBarClose} severity="error">{message}</Alert>
-										</Snackbar>
-								}
-							
-							</div>
-
-							<Link to="/gallery">
-								<button className="absolute bottom-6 right-8 bg-black hover:bg-gray-900 focus:outline-none text-white text-lg font-bold h-12 w-52 rounded-full">
-									Community Gallery
-								</button>
-							</Link>
-							
-						</div>
-					</div>
-			}
-			</BrowserView>
-
-			<MobileView> 
-				<MobileDefault />
-			</MobileView>
-		</>
-	);
+      <MobileView>
+        <MobileDefault />
+      </MobileView>
+    </>
+  );
 }
 
 export default App;

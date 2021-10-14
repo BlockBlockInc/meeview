@@ -1,14 +1,17 @@
-import { useSnapshot } from "valtio"; 
+import { useSnapshot } from "valtio";
 import { state } from "../utils/groundState";
 import { HexColorPicker } from "react-colorful";
 
-// Picker with color options to change ground color 
+// Picker with color options to change ground color
 function Picker() {
-	const snap = useSnapshot(state);
+  const snap = useSnapshot(state);
 
-	return (
-		<HexColorPicker color={snap.groundColor} onChange={(color) => (state.groundColor = color)} />
-	);
+  return (
+    <HexColorPicker
+      color={snap.groundColor}
+      onChange={(color) => (state.groundColor = color)}
+    />
+  );
 }
 
-export default Picker; 
+export default Picker;
