@@ -3,6 +3,7 @@ import { useDropzone } from "react-dropzone";
 import { useCallback, useState } from "react";
 import { convertVoxToVrm } from "../utils/convertVox";
 import { Loading } from "./Loader";
+import axios from "axios";
 
 export default function Upload() {
     const [uploading, isDoneUploading] = useState(false);
@@ -34,6 +35,8 @@ export default function Upload() {
 
                 <div className="border-solid border-black rounded-md">
                     <h1 className="text-2xl font-nimbus mt-5">UPLOAD YOUR VOX FILE</h1>
+                    <p className="text-sm font-nimbus mt-6">Your default upload Meebit file name should be formatted this way: meebit_XXXXX_t_solid.vox</p>
+                    <p className="text-sm font-nimbus mt-1">Other file names will not work!</p>
                 </div>
             </div>
 
@@ -64,6 +67,10 @@ export default function Upload() {
                     <div className="flex flex-col">
                         <p className="font-nimbus">Your vox file conversion is complete.</p>
                         <p className="font-nimbus">You can head over to the homepage and try out the photobooth.</p>
+                    </div> 
+                    : uploading ?  
+                    <div className="flex flex-col">
+                        <p className="font-nimbus">Error uploading your vox file. Try again!</p>
                     </div> 
                     : null
                 }

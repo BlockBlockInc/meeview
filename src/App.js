@@ -174,7 +174,7 @@ function App() {
                     <button
                       className="outline-none	text-md font-bold mt-4 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-80 rounded-md"
                     >
-                      Uploaded already? Download your files.
+                      Your Meebit Files
                     </button>
                   </Link>
                 }
