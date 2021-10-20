@@ -14,10 +14,9 @@ import {
   Bloom,
   Noise,
   HueSaturation,
-  ChromaticAberration,
   Pixelation,
 } from "@react-three/postprocessing";
-import { BlendFunction } from "postprocessing";
+// import { BlendFunction } from "postprocessing";
 import { useDropzone } from "react-dropzone";
 
 import { firestoreRef } from "../utils/firebase";
@@ -39,7 +38,7 @@ import ny from "../assets/cubemap/ny.png";
 import px from "../assets/cubemap/px.png";
 import pz from "../assets/cubemap/pz.png";
 import py from "../assets/cubemap/py.png";
-import { BufferGeometry } from "three";
+import { DirectionalLight } from "three";
 
 const baseStyle = {
   display: "flex",
@@ -81,9 +80,9 @@ function Body(props) {
   const [ground, setGround] = useState(true);
 
   // Effects
-  const [chromatic, setChromatic] = useState(false);
-  const [chromaticX, setChromaticX] = useState(0.02);
-  const [chromaticY, setChromaticY] = useState(0.002);
+  // const [chromatic, setChromatic] = useState(false);
+  // const [chromaticX, setChromaticX] = useState(0.02);
+  // const [chromaticY, setChromaticY] = useState(0.002);
 
   const [pixelation, setPixelation] = useState(false);
   const [pixelationValue, setPixelationValue] = useState(30);
@@ -339,17 +338,17 @@ function Body(props) {
     setHeadZ(nv);
   };
 
-  const handleChromatic = (e) => {
-    setChromatic(e.target.checked);
-  };
+  // const handleChromatic = (e) => {
+  //   setChromatic(e.target.checked);
+  // };
 
-  const setChromaticXValue = (e, nv) => {
-    setChromaticX(nv);
-  };
+  // const setChromaticXValue = (e, nv) => {
+  //   setChromaticX(nv);
+  // };
 
-  const setChromaticYValue = (e, nv) => {
-    setChromaticY(nv);
-  };
+  // const setChromaticYValue = (e, nv) => {
+  //   setChromaticY(nv);
+  // };
 
   const handlePixelation = (e) => {
     setPixelation(e.target.checked);
@@ -770,19 +769,22 @@ function Body(props) {
           ) : null}
 
           <ambientLight intensity={0.85} />
-          <hemisphereLight
+          {/* <hemisphereLight
             color={0xffeeb1}
             groundColor={0x080810}
-            position={[0, 0.12, 0.2]}
             intensity={3.5}
+          /> */}
+          <directionalLight
+            color={0x080810} 
+            intensity={0.25}
+            position={[0,-1,0]}
           />
           <pointLight
             color={0x080810}
             position={[1, -19, -35]}
-            intensity={0.2}
+            intensity={4.5}
           />
           {/* <spotLight color={0x080810} position={[1, -20, -50]} intensity={12} angle={1} distance={50} penumbra={0.1} /> */}
-
           <EffectComposer>
             <Bloom
               luminanceThreshold={0.2}
@@ -793,12 +795,12 @@ function Body(props) {
             <HueSaturation saturation={0.2} />
             <AdaptiveDpr />
 
-            {chromatic === true ? (
+            {/* {chromatic === true ? (
               <ChromaticAberration
                 blendFunction={BlendFunction.Normal}
                 offset={[chromaticX, chromaticY]}
               />
-            ) : null}
+            ) : null} */}
 
             {pixelation === true ? (
               <Pixelation granularity={pixelationValue} />
@@ -971,7 +973,7 @@ function Body(props) {
                   </div>
                 </div>
 
-                <div className="ml-2 mt-10">
+                {/* <div className="ml-2 mt-10">
                   <h1 className="font-nimbus text-md font-bold mt-5">
                     Chromatic
                   </h1>
@@ -998,7 +1000,7 @@ function Body(props) {
                       onChange={setChromaticYValue}
                     />
                   </div>
-                </div>
+                </div> */}
 
                 <div className="ml-2 mt-10">
                   <h1 className="font-nimbus text-md font-bold">Pixelation</h1>
