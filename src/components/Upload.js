@@ -7,19 +7,52 @@ import axios from "axios";
 
 export default function Upload() {
     const [uploading, isDoneUploading] = useState(false);
+    const [error, setError] = useState({
+        res: false, 
+        message: ""
+    });
     const [loading, setLoading] = useState(false);
 
     const onDrop = useCallback(async (acceptedFiles) => {
         setLoading(true);
 
-        console.log("FILE", acceptedFiles)
         const file = acceptedFiles[0];
 
-        const uploadResult = await convertVoxToVrm(file); 
+        const fileNameCheck = checkFileName(file.name);
 
-        isDoneUploading(uploadResult);
-        setLoading(false);
+        if(fileNameCheck){
+            setError({res: false, message: ""});
+
+            const uploadResult = await convertVoxToVrm(file); 
+
+            if(uploadResult === false){
+                setError({
+                    res: true, 
+                    message: "Error uploading your vox file. Try again!"
+                });
+            }
+
+            isDoneUploading(uploadResult);
+            setLoading(false);
+        }else{
+            setError({
+                res: true, 
+                message: "Wrong file name. Try again!"
+            });
+            isDoneUploading(false);
+            setLoading(false);
+        }     
     }, []);
+
+    const checkFileName = (path) => {
+        const splitName = path.split('_');
+        
+        if(splitName[0] === 'meebit' && splitName[2] === 't' && splitName[3] === 'solid.vox'){
+            return true;
+        }
+
+        return false;
+    };
     
     const {getRootProps, getInputProps, isDragActive} = useDropzone({accept: '.vox', onDrop});
 
@@ -44,7 +77,7 @@ export default function Upload() {
                 
                 {
                     isDragActive ?
-                    <p className="font-nimbus">Drop files here</p> :
+                    <p className="font-nimbus">Drop file here</p> :
                     <p className="font-nimbus">Drag and drop file here</p>
                 }
             </div>
@@ -71,10 +104,12 @@ export default function Upload() {
                 }
 
                 {
-                    !uploading ?  
+                    error.res ?    
                     <div className="flex flex-col">
-                        <p className="font-nimbus">Error uploading your vox file. Try again!</p>
-                    </div> : null
+                        <p className="font-nimbus">{error.message}</p>
+                    </div> 
+                    :
+                    null
                 }
             </div>
         </div>
