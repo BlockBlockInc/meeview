@@ -3,8 +3,6 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import Gallery from "./components/Gallery";
-import Upload from "./components/Upload";
-import Files from "./components/Files";
 import { Web3ReactProvider } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -20,8 +18,6 @@ ReactDOM.render(
         <Switch>
           <Route exact path="/" component={App} />
           <Route path="/gallery" component={Gallery} />
-          <Route path="/upload" component={Upload} />
-          <Route path="/files" component={Files} />
         </Switch>
       </div>
     </Router>

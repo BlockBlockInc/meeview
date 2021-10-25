@@ -123,8 +123,8 @@ function App() {
           <Body meebits={meebits} />
         ) : (
           <div className="flex h-screen">
-            <div className="flex flex-col m-auto">
-              <div className="flex flex-col justify-center items-center pl-7 pr-7">
+            <div className="m-auto flex">
+              <div className="pl-7 pr-7">
                 <Header />
 
                 {!!account === true ? (
@@ -139,49 +139,29 @@ function App() {
                   </Snackbar>
                 ) : null}
 
-                {
-                  <Link to="/upload">
-                    <button
-                      className="outline-none	text-md font-bold mt-4 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-80 rounded-md"
-                    >
-                      Upload your Meebit Now
-                    </button>
-                  </Link>
-                }
-
                 {!!(account && library) === false ? (
                   <button
-                    className="outline-none	text-md font-bold mt-4 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-80 rounded-md"
+                    className="outline-none	text-md font-bold mt-8 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-52 rounded-md"
                     onClick={handleClick}
                   >
                     Connect to Metamask
                   </button>
                 ) : loading === false ? (
                   <button
-                    className="outline-none	text-md font-bold mt-4 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-80 rounded-md"
+                    className="outline-none	text-md font-bold mt-8 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-52 rounded-md"
                     onClick={handleFetchMeebits}
                   >
-                    Load Meebit
+                    Load Meebits
                   </button>
                 ) : (
-                  <button className="outline-none	animate-bounce text-md font-bold mt-4 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-80 rounded-md">
-                    Loading Meebit!
+                  <button className="outline-none	animate-bounce text-md font-bold mt-8 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-52 rounded-md">
+                    Loading Meebits!
                   </button>
                 )}
 
                 {
-                  <Link to="/files">
-                    <button
-                      className="outline-none	text-md font-bold mt-4 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 text-white font-bold h-12 w-80 rounded-md"
-                    >
-                      Your Meebit Files
-                    </button>
-                  </Link>
-                }
-
-                {
                   <button
-                    className="absolute bottom-20 right-8 outline-none	text-md font-bold text-center justify-center bg-black hover:bg-gray-900 text-white font-bold h-12 w-52 rounded-full"
+                    className="outline-none	text-md font-bold mt-8 text-center justify-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 ml-5 text-white font-bold h-12 w-52 rounded-md"
                     onClick={handleDemo}
                   >
                     Demo

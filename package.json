@@ -18,6 +18,7 @@
     "@web3-react/core": "^6.1.9",
     "@web3-react/frame-connector": "^6.0.9",
     "@web3-react/injected-connector": "^6.0.7",
+    "@web3-react/walletconnect-connector": "^6.2.0",
     "axios": "^0.21.1",
     "downloadjs": "^1.4.7",
     "ethers": "^5.4.0",
@@ -33,10 +34,9 @@
     "react-device-detect": "^1.17.0",
     "react-dom": "^17.0.2",
     "react-dropzone": "^11.3.2",
-    "react-loader-spinner": "^4.0.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
-    "three": "^0.133.1",
+    "three": "^0.129.0",
     "valtio": "^1.0.6",
     "web-vitals": "^1.1.2"
   },
@@ -68,7 +68,7 @@
     "autoprefixer": "^9.8.6",
     "postcss": "^7.0.35",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.4"
-  },
+  }, 
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
