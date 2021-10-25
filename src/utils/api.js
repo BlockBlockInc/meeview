@@ -6,7 +6,7 @@ export const fetchMeebits = async (userAddress) => {
 
   const config = {
     method: "get",
-    url: `https://api.opensea.io/api/v1/assets?owner=${userAddress}&asset_contract_address=${meebitContractAddy}&order_direction=desc&offset=0&limit=20`,
+    url: `https://api.opensea.io/api/v1/assets?owner=${userAddress}&asset_contract_address=${meebitContractAddy}&order_direction=desc&offset=0&limit=50`,
     timeout: 180000,
     responseType: "json",
   };
