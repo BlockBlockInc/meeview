@@ -16,7 +16,6 @@ export default function Upload() {
         const file = acceptedFiles[0];
 
         const uploadResult = await convertVoxToVrm(file); 
-        console.log(uploadResult);
 
         isDoneUploading(uploadResult);
         setLoading(false);
@@ -68,11 +67,14 @@ export default function Upload() {
                         <p className="font-nimbus">Your vox file conversion is complete.</p>
                         <p className="font-nimbus">You can head over to the homepage and try out the photobooth.</p>
                     </div> 
-                    : uploading ?  
+                    : null
+                }
+
+                {
+                    !uploading ?  
                     <div className="flex flex-col">
                         <p className="font-nimbus">Error uploading your vox file. Try again!</p>
-                    </div> 
-                    : null
+                    </div> : null
                 }
             </div>
         </div>
