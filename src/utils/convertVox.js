@@ -8,13 +8,7 @@ export const convertVoxToVrm = async (file) => {
     const data = new FormData(); 
     data.append('file', file, file.name);
 
-    const headers = {
-        'Access-Control-Allow-Origin': "*"
-    }
-
-    const res = await axios.post('https://meeview.xyz/photobooth', data, {
-        headers: headers
-    });
+    const res = await axios.post('https://api.meeview.xyz/photobooth', data);
 
     if(res.data.status === "done"){
         return true; 
