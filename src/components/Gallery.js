@@ -109,16 +109,16 @@ function Gallery() {
           poses.map((file, index) => {
             return (
               <div className="mt-10 mr-20" key={index}>
-                <div className="bg-white rounded-lg shadow-xl w-80 h-72">
+                <div className="flex flex-col w-80 border border-gray-300 relative overflow-hidden leading-6 rounded-lg hover:cursor-pointer shadow-lg">
                   <div>
                     <button onClick={() => handleClick(file.imgFile)}>
                       <img
-                        className="rounded-t-lg object-contain"
+                        className="object-cover w-full h-72"
                         src={file.imgFile}
                         alt="img"
                       ></img>
 
-                      <div className="p-3 flex flex-col text-left">
+                      <div className="p-3 flex flex-col text-left border-t-2">
                         <h1 className="font-bold text-sm mb-2">
                           Submitted by {file.submitterName}
                         </h1>

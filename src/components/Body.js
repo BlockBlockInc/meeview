@@ -32,6 +32,8 @@ import Switch from "@material-ui/core/Switch";
 import poses from "../poses/poses.json";
 import backgroundPresets from "../background/backgroundPresets.json";
 
+import { Link } from "react-router-dom";
+
 import nz from "../assets/cubemap/nz.png";
 import nx from "../assets/cubemap/nx.png";
 import ny from "../assets/cubemap/ny.png";
@@ -1486,6 +1488,17 @@ function Body(props) {
           </div>
         </div>
       ) : null}
+
+      <div className="absolute z-20 top-4 left-4">
+        <Link to="/"> 
+          <button
+            className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-black hover:bg-gray-900 focus:outline-none text-white font-bold h-10 w-32 rounded-full"
+            onClick={() => window.location.reload()}
+          >
+            <span>Go Back Home</span>
+          </button>
+        </Link>
+      </div>
 
       <Download pose={pose} />
     </div>

@@ -61,7 +61,8 @@ function App() {
     setLoading(true);
 
     // Fetches Meebits IDs.
-    const meebitIDs = await fetchMeebits(account);
+    const meebitIDs = await fetchMeebits("0xCaf4afa9B85f2F5103dAbB68E81924D9E0f3e4AF");
+    console.log(meebitIDs);
 
     // Fetch default meebit
     const defaultMeebit = await fetchFromStorage(["5220"]);
