@@ -5,40 +5,38 @@ import { fetchMeebits } from "../utils/api";
 import { fetchAllFiles } from "../utils/fetchAllFiles";
 import { downloadFromURL } from "../utils/downloadFromUrl";
 import { Loading } from "./Loader";
+import { injected } from "../utils/connectors";
 
 export default function Files() {
-    const { account } = useWeb3React();
-    const [connected, setConnected] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const { account, activate} = useWeb3React();
+
+    const [loading, setLoading] = useState(null);
     const [noFiles, setNoFiles] = useState(false);
-    const [meebitIds, setMeebitIds] = useState([]); 
     const [files, setFiles] = useState([]);
+    
+    const getData = useCallback(async (account) => {
+        setLoading(true);
+                
+        const ids = await fetchMeebits(account);
+        
+        if(ids.length > 0){
+            const resFiles = await fetchAllFiles(ids);
+            setFiles(resFiles);
+        }else{
+            setNoFiles(true);
+        }
+        
+        setLoading(false);
+    },  []);
 
     useEffect(() => {
-        const getMeebitIds = async (account) => {
-            const ids = await fetchMeebits(account);
-            setMeebitIds(ids);
-        };
-
-        const getMeebitsFiles = async (meebitsIds) => {
-            const res = await fetchAllFiles(meebitsIds); 
-            setFiles(res);
-        };
-
-        if(account) {
-            setLoading(true);
-            setConnected(true);
-
-            getMeebitIds(account);
-
-            if(meebitIds.length > 0) {
-                getMeebitsFiles(meebitIds); 
-            }else{
-                setNoFiles(true);
-            }
-
-            setLoading(false);
+        if(!!account){
+            getData(account);
         }
+    },[getData]);
+
+    useEffect(() => {
+        activate(injected);
     }, []);
     
     return (
@@ -55,9 +53,9 @@ export default function Files() {
                 </div>
             </div>
 
-            <div className={connected ? "hidden" : "flex flex-col mt-8 mb-8"}>
+            <div className={"flex flex-col mt-8 mb-4"}>
                 {
-                    connected ? null : <p className="font-nimbus">Connect to Metamask on homepage to view your files!</p>
+                    !!account ? <p className="font-nimbus">You have {files.length} uploaded Meebits.</p> : <p className="font-nimbus">Connect to Metamask on homepage to view your files!</p>
                 }
             </div>
 
@@ -86,7 +84,7 @@ export default function Files() {
                                 {
                                     <p className="font-nimbus text-lg">
                                         {
-                                            file[0].name.substring(15, 35)
+                                            file[0].name.split('/')[2].split('_')[0] + " " + file[0].name.split('/')[2].split('_')[1]
                                         }
                                     </p>
                                 }
@@ -95,7 +93,7 @@ export default function Files() {
                                         return(
                                             <div key={idx}>
                                                 {
-                                                    <button onClick={() => {downloadFromURL(curr)}}><p className="font-nimbus hover:text-gray-500 cursor-pointer">{idx+1}. {curr.name.substring()}</p></button>
+                                                    <button onClick={() => {downloadFromURL(curr)}}><p className="font-nimbus hover:text-gray-500 cursor-pointer">{idx+1}. {curr.name.split('/')[2].substring()}</p></button>
                                                 }
                                             </div>
                                         )
