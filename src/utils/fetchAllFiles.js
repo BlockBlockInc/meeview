@@ -4,7 +4,7 @@ import { firebaseStorageRef } from "../utils/firebase";
 export const fetchAllFiles = async (meebitIDs) => {
   const fileRef = firebaseStorageRef.ref();
 
-  console.log("FETCHING FILES");
+  // console.log("FETCHING FILES");
 
   let meebits = []; 
   let temp = []; 
@@ -16,7 +16,7 @@ export const fetchAllFiles = async (meebitIDs) => {
     const id = meebitIDs[i];
     const paddedId = id.padStart(5, '0'); 
 
-    console.log(paddedId);
+    // console.log(paddedId);
 
     const folder = "meebit_" + paddedId + "_t_solid/";
     const fileLoc = `convertedFiles/${folder}`;
@@ -45,7 +45,7 @@ export const fetchAllFiles = async (meebitIDs) => {
         firestoreUrl = null;
         }
 
-        console.log("IMG URL : ", firestoreUrl)
+        // console.log("IMG URL : ", firestoreUrl)
 
 
         for(let i = 0; i < items.length; i++){
@@ -57,7 +57,7 @@ export const fetchAllFiles = async (meebitIDs) => {
     }
   }
 
-  console.log(meebits);
+  // console.log(meebits);
 
   return meebits;
 };
